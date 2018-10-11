@@ -1,0 +1,13 @@
+language: groovy
+matrix:
+  include:
+    - jdk: oraclejdk8
+    - jdk: oraclejdk9
+branches:
+  only:
+  - master
+  - develop
+sudo: false
+install: /bin/true
+script:
+- ./gradlew check --info --stacktrace --warning-mode=all

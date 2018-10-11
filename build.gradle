@@ -1,0 +1,77 @@
+import java.util.concurrent.TimeUnit
+
+apply plugin: "groovy"
+
+group = "de.hhu.stups"
+version = "3.2.11"
+
+wrapper {
+	gradleVersion = "4.10.2"
+	distributionType = Wrapper.DistributionType.ALL
+}
+
+repositories {
+	jcenter()
+	maven {
+		name "Sonatype snapshots"
+		url "https://oss.sonatype.org/content/repositories/snapshots"
+	}
+	maven {
+		name "Sonatype releases"
+		url "https://oss.sonatype.org/content/repositories/releases"
+	}
+}
+
+configurations.all {
+	resolutionStrategy {
+		cacheChangingModulesFor(0, TimeUnit.SECONDS)
+	}
+}
+
+sourceSets {
+	main {
+		// Compile all sources using the Groovy compiler, to make Groovy classes visible to Java code
+		groovy {
+			srcDirs += java.srcDirs
+		}
+		java {
+			srcDirs = []
+		}
+	}
+}
+
+dependencies {
+	compile group: "de.hhu.stups", name: "de.prob2.kernel", version: "3.2.11" // Eclipse Public License 2.0
+
+	// Test dependencies
+	testCompile group: "org.spockframework", name: "spock-core", version: "1.2-groovy-2.5" // Apache License 2.0
+	// Byte Buddy and Objenesis are needed by Spock to mock classes
+	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.9.0" // Apache License 2.0
+	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "2.6" // Apache License 2.0
+}
+
+final SOURCE_ENCODING = "UTF-8"
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+tasks.withType(JavaCompile) {
+	options.encoding = SOURCE_ENCODING
+}
+
+tasks.withType(GroovyCompile) {
+	options.encoding = SOURCE_ENCODING
+}
+
+tasks.withType(Javadoc) {
+	options.encoding = SOURCE_ENCODING
+}
+
+// The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM, which is set in the gradle.properties file.
+
+task groovyIntegrationTests(type: JavaExec, dependsOn: [classes, test]) {
+	main = "de.prob.Main"
+	classpath = sourceSets.main.runtimeClasspath
+	args = ["-script", "groovyTests"]
+}
+check.dependsOn(groovyIntegrationTests)
