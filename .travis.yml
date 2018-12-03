@@ -7,7 +7,6 @@ branches:
   only:
   - master
   - develop
-sudo: false
 install: /bin/true
 script:
 - ./gradlew check --info --stacktrace --warning-mode=all
