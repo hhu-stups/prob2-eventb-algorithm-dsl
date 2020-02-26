@@ -1,7 +1,9 @@
 import java.util.concurrent.TimeUnit
 
-apply plugin: "java-library"
-apply plugin: "groovy"
+plugins {
+	id "java-library"
+	id "groovy"
+}
 
 group = "de.hhu.stups"
 version = "3.2.11"
