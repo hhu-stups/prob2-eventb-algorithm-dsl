@@ -1,5 +1,6 @@
 import java.util.concurrent.TimeUnit
 
+apply plugin: "java-library"
 apply plugin: "groovy"
 
 group = "de.hhu.stups"
@@ -41,10 +42,10 @@ sourceSets {
 }
 
 dependencies {
-	compile group: "de.hhu.stups", name: "de.prob2.kernel", version: "3.2.12-SNAPSHOT", changing: true // Eclipse Public License 2.0
+	api group: "de.hhu.stups", name: "de.prob2.kernel", version: "3.2.12-SNAPSHOT", changing: true // Eclipse Public License 2.0
 
 	// Test dependencies
-	testCompile group: "org.spockframework", name: "spock-core", version: "1.2-groovy-2.5" // Apache License 2.0
+	testImplementation group: "org.spockframework", name: "spock-core", version: "1.2-groovy-2.5" // Apache License 2.0
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
 	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.9.0" // Apache License 2.0
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "2.6" // Apache License 2.0
