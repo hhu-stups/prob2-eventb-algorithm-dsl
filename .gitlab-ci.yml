@@ -1,0 +1,26 @@
+image: openjdk:8-jdk-slim
+
+stages:
+  - test
+
+variables:
+  GRADLE_OPTIONS: --no-daemon --info --stacktrace --warning-mode=all
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+
+before_script:
+  - export GRADLE_USER_HOME="${PWD}/.gradle"
+
+.tests:
+  stage: test
+  script: ./gradlew ${GRADLE_OPTIONS} check
+
+tests:jdk-8:
+  extends: .tests
+
+tests:jdk-11:
+  extends: .tests
+  image: openjdk:11-jdk-slim

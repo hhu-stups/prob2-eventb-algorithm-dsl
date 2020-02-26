@@ -1,1 +1,1 @@
-[![Build Status](https://travis-ci.com/hhu-stups/prob2-eventb-algorithm-dsl.svg?branch=master)](https://travis-ci.com/hhu-stups/prob2-eventb-algorithm-dsl)
+[![Build Status](https://gitlab.cs.uni-duesseldorf.de/stups/prob/prob2_eventb_algorithm_dsl/badges/master/pipeline.svg)](https://gitlab.cs.uni-duesseldorf.de/stups/prob/prob2_eventb_algorithm_dsl/pipelines)
