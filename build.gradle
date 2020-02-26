@@ -6,7 +6,7 @@ group = "de.hhu.stups"
 version = "3.2.11"
 
 wrapper {
-	gradleVersion = "5.6.4"
+	gradleVersion = "6.2.1"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
