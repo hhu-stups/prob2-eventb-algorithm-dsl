@@ -52,10 +52,12 @@ dependencies {
 	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.1" // Apache License 2.0
 }
 
-final SOURCE_ENCODING = "UTF-8"
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
 
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
+final SOURCE_ENCODING = "UTF-8"
 
 tasks.withType(JavaCompile) {
 	options.encoding = SOURCE_ENCODING
