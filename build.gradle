@@ -15,7 +15,7 @@ wrapper {
 }
 
 repositories {
-	jcenter()
+	mavenCentral()
 	if (isSnapshot) {
 		maven {
 			name "Sonatype snapshots"
