@@ -81,3 +81,10 @@ task groovyIntegrationTests(type: JavaExec, dependsOn: [classes, test]) {
 	args = ["-script", "groovyTests"]
 }
 check.dependsOn(groovyIntegrationTests)
+
+// Run a single groovy Testcase
+// Usage: ./gradlew groovyTest --args="-script groovyTests/theoryIntegration.groovy"
+task groovyTest(type: JavaExec) {
+	mainClass = "de.prob2.commandline.CommandLineMain"
+	classpath = sourceSets.test.runtimeClasspath
+}
