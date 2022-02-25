@@ -10,8 +10,7 @@ version = "3.2.12-SNAPSHOT"
 final isSnapshot = project.version.endsWith("-SNAPSHOT")
 
 wrapper {
-	gradleVersion = "6.8.2"
-	distributionType = Wrapper.DistributionType.ALL
+	gradleVersion = "7.4"
 }
 
 repositories {
