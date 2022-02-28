@@ -298,7 +298,7 @@ public class MachineModifier extends AbstractModifier {
 		if (!event) {
 			throw new IllegalArgumentException("Can only duplicate an event that exists! Event with name $eventName was not found.")
 		}
-		addEvent(new Event(newName, event.type, event.extended, event.children))
+		addEvent(event.withName(newName))
 	}
 
 	def MachineModifier removeEvent(String name) {
