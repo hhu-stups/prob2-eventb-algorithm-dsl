@@ -132,7 +132,7 @@ public class ModelModifier extends AbstractModifier {
 		m.graph.getIncomingEdges(context.getName()).each { Edge e ->
 			if (e.relationship == ERefType.EXTENDS) {
 				Context ctx = m.getContext(e.getFrom().getElementName())
-				Context ctx2 = ctx.removeFrom(Context.class, context)
+				Context ctx2 = ctx.withExtends(ctx.extends.removeElement(context))
 				m = newMM(m).replaceContext(ctx, ctx2).getModel()
 			} else if (e.relationship == ERefType.SEES) {
 				EventBMachine mch = m.getMachine(e.getFrom().getElementName())
@@ -162,7 +162,7 @@ public class ModelModifier extends AbstractModifier {
 		m.graph.getIncomingEdges(oldContext.getName()).each { Edge e ->
 			if (e.relationship == ERefType.EXTENDS) {
 				Context ctx = m.getContext(e.getFrom().getElementName())
-				Context ctx2 = ctx.replaceIn(Context.class, oldContext, newContext)
+				Context ctx2 = ctx.withExtends(ctx.extends.replaceElement(oldContext, newContext))
 				m = newMM(m).replaceContext(ctx, ctx2).getModel()
 			} else if (e.relationship == ERefType.SEES) {
 				EventBMachine mch = m.getMachine(e.getFrom().getElementName())

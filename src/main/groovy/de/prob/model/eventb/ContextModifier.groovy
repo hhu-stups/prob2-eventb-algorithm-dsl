@@ -1,12 +1,9 @@
 package de.prob.model.eventb
 
-import org.eventb.core.ast.extension.IFormulaExtension
-
-import de.prob.model.representation.Axiom
-import de.prob.model.representation.Constant
-import de.prob.model.representation.ElementComment
 import de.prob.model.representation.ModelElementList
 import de.prob.model.representation.Set
+
+import org.eventb.core.ast.extension.IFormulaExtension
 
 public class ContextModifier extends AbstractModifier {
 	final Context context
@@ -47,7 +44,7 @@ public class ContextModifier extends AbstractModifier {
 
 	def ContextModifier set(String set, String comment="") throws ModelGenerationException {
 		def bset = new Set(parseIdentifier(set), comment)
-		new ContextModifier(context.addTo(Set.class, bset))
+		new ContextModifier(context.withSets(context.sets.addElement(bset)))
 	}
 
 	def ContextModifier removeSet(String setName) {
@@ -60,7 +57,7 @@ public class ContextModifier extends AbstractModifier {
 	 * @param set to be removed
 	 */
 	def ContextModifier removeSet(Set set) {
-		return newCM(context.removeFrom(Set.class, set))
+		return newCM(context.withSets(context.sets.removeElement(set)))
 	}
 
 	def ContextModifier constants(String... constants) throws ModelGenerationException {
@@ -73,7 +70,8 @@ public class ContextModifier extends AbstractModifier {
 
 	def ContextModifier constant(String identifier, String comment="") throws ModelGenerationException {
 		parseIdentifier(identifier)
-		newCM(context.addTo(Constant.class, new EventBConstant(identifier, false, null, comment)))
+		def constant = new EventBConstant(identifier, false, null, comment)
+		newCM(context.withConstants(context.constants.addElement(constant)))
 	}
 
 	def ContextModifier removeConstant(String name) {
@@ -86,7 +84,7 @@ public class ContextModifier extends AbstractModifier {
 	 * @param constant to be removed
 	 */
 	def ContextModifier removeConstant(EventBConstant constant) {
-		def ctx = context.removeFrom(Constant.class, constant)
+		def ctx = context.withConstants(context.constants.removeElement(constant))
 		return newCM(ctx)
 	}
 
@@ -126,7 +124,7 @@ public class ContextModifier extends AbstractModifier {
 	def ContextModifier axiom(String name, String predicate, boolean theorem=false, String comment="") throws ModelGenerationException {
 		def n = validate('name', name)
 		def axiom = new EventBAxiom(getUniqueName(n, context.getAllAxioms()), parsePredicate(predicate), theorem, comment)
-		newCM(context.addTo(Axiom.class, axiom))
+		newCM(context.withAxioms(context.axioms.addElement(axiom)))
 	}
 
 	def ContextModifier removeAxiom(String name) {
@@ -140,12 +138,17 @@ public class ContextModifier extends AbstractModifier {
 	 * @return whether or not the removal was successful
 	 */
 	def ContextModifier removeAxiom(EventBAxiom axiom) {
-		def ctx = context.removeFrom(Axiom.class, axiom)
+		def ctx = context.withAxioms(context.axioms.removeElement(axiom))
 		return newCM(ctx)
 	}
 
 	def ContextModifier addComment(String comment) {
-		comment ? newCM(context.addTo(ElementComment.class, new ElementComment(comment))) : this
+		if (!comment) {
+			return this
+		}
+
+		def existingComment = context.comment
+		newCM(context.withComment(existingComment == null ? comment : existingComment + "\n" + comment))
 	}
 
 	def ContextModifier make(Closure definition) throws ModelGenerationException {

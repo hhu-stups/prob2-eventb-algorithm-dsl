@@ -1,7 +1,5 @@
 package de.prob.model.eventb
 
-import de.prob.model.representation.ElementComment
-
 import org.eventb.core.ast.extension.IFormulaExtension
 
 import spock.lang.Specification
@@ -521,7 +519,7 @@ class ContextModifierTest extends Specification {
 		modifier = modifier.addComment(mycomment)
 
 		then:
-		modifier.getContext().getChildrenOfType(ElementComment.class).collect { it.getComment() } == [mycomment]
+		modifier.context.comment == mycomment
 	}
 
 	def "adding a null or empty comment does nothing"() {

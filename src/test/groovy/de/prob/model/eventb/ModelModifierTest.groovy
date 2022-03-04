@@ -192,7 +192,7 @@ class ModelModifierTest extends Specification {
 		}
 
 		then:
-		mm.getModel().ctx.getChildrenOfType(ElementComment.class).collect { it.getComment() } == [mycomment]
+		mm.model.ctx.comment == mycomment
 	}
 
 	def "when extending a context, it must be there already"() {
