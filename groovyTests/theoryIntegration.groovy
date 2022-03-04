@@ -1,7 +1,6 @@
 import java.nio.file.Paths
 
 import de.prob.model.eventb.ModelModifier
-import de.prob.model.eventb.theory.Theory
 import de.prob.statespace.Trace
 
 final s1 = api.eventb_load(Paths.get(dir, "TheoryExamples", "Sequences", "Mch.bcm").toString())
@@ -12,7 +11,7 @@ assert t.evalCurrent("s(1)").value == "5"
 t = t.$add("p = 9")
 assert t.evalCurrent("s(2)").value == "9"
 final m1 = s1.model
-assert !m1.getChildrenOfType(Theory.class).Seq.typeEnvironment.empty
+assert !m1.theories.Seq.typeEnvironment.empty
 
 final workspace = Paths.get(dir, "TheoryExamples").toString()
 final m2 = new ModelModifier().make {

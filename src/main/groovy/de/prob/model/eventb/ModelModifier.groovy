@@ -127,7 +127,8 @@ public class ModelModifier extends AbstractModifier {
 	}
 
 	def ModelModifier removeContext(Context context) {
-		EventBModel m = model.removeFrom(Context.class, context)
+		EventBModel m = model
+		m = m.withContexts(m.contexts.removeElement(context))
 		m.graph.getIncomingEdges(context.getName()).each { Edge e ->
 			if (e.relationship == ERefType.EXTENDS) {
 				Context ctx = m.getContext(e.getFrom().getElementName())
@@ -143,7 +144,8 @@ public class ModelModifier extends AbstractModifier {
 	}
 
 	def ModelModifier removeMachine(EventBMachine machine) {
-		EventBModel m = model.removeFrom(Machine.class, machine)
+		EventBModel m = model
+		m = m.withMachines(m.machines.removeElement(machine))
 		m.graph.getIncomingEdges(machine.getName()).each { Edge e ->
 			if (e.relationship == ERefType.REFINES) {
 				EventBMachine mch = m.getMachine(e.getFrom().getElementName())
@@ -156,7 +158,7 @@ public class ModelModifier extends AbstractModifier {
 
 	def ModelModifier replaceContext(Context oldContext, Context newContext) {
 		EventBModel m = model
-		m = m.replaceIn(Context.class, oldContext, newContext)
+		m = m.withContexts(m.contexts.replaceElement(oldContext, newContext))
 		m.graph.getIncomingEdges(oldContext.getName()).each { Edge e ->
 			if (e.relationship == ERefType.EXTENDS) {
 				Context ctx = m.getContext(e.getFrom().getElementName())
@@ -173,7 +175,7 @@ public class ModelModifier extends AbstractModifier {
 
 	def ModelModifier replaceMachine(EventBMachine oldMachine, EventBMachine newMachine) {
 		EventBModel m = model
-		m = m.replaceIn(Machine.class, oldMachine, newMachine)
+		m = m.withMachines(m.machines.replaceElement(oldMachine, newMachine))
 		m.graph.getIncomingEdges(oldMachine.getName()).each { Edge e ->
 			if (e.relationship == ERefType.REFINES) {
 				EventBMachine ma = m.getMachine(e.getFrom().getElementName())
@@ -214,7 +216,7 @@ public class ModelModifier extends AbstractModifier {
 			theories = theories.addMultiple(extractor.getTheories())
 			types.addAll(extractor.getTypeEnv())
 		}
-		def model = model.set(Theory.class, theories)
+		def model = model.withTheories(theories)
 		new ModelModifier(model, types)
 	}
 
