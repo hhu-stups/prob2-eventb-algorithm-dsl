@@ -91,11 +91,11 @@ public class MachineExtractor extends ElementExtractor {
 	@Override
 	public void caseAEvent(final AEvent node) {
 		EventExtractor eE = new EventExtractor(new Event(node.getName().getText(), EventType.ORDINARY, false),
-				machineM.getMachine().getRefines(), typeEnv, getComment(node.getComments()));
+				machineM.getMachine().getRefinesMachine(), typeEnv, getComment(node.getComments()));
 
 		node.apply(eE);
 
-		machineM = new MachineModifier(machineM.getMachine().addTo(BEvent.class, eE.getEvent()), typeEnv);
+		machineM = new MachineModifier(machineM.getMachine().withEvents(machineM.getMachine().getEvents().addElement(eE.getEvent())), typeEnv);
 	}
 
 	@Override

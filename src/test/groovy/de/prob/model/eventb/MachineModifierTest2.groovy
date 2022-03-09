@@ -176,7 +176,7 @@ class MachineModifierTest2 extends Specification {
 		when:
 		def mypo = po("STH")
 		def pos = new ModelElementList([mypo])//])
-		def mch = modifier.getMachine().set(ProofObligation.class, pos)
+		def mch = modifier.machine.withProofs(pos)
 		new MachineModifier(mch, [] as Set).removePOsForEvent(null)
 
 		then:

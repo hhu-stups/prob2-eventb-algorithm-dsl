@@ -74,7 +74,7 @@ class MachineModifierTest extends Specification {
 		modifier = modifier.setRefines(mch)
 
 		then:
-		modifier.getMachine().getRefines() == [mch]
+		modifier.machine.refinesMachine == mch
 	}
 
 	def "it is possible to add an initialisation"() {
@@ -253,7 +253,7 @@ class MachineModifierTest extends Specification {
 			po("evt/inv2/INV"),
 			po("evt/inv3/INV")
 		])
-		modifier = new MachineModifier(modifier.getMachine().set(ProofObligation.class, pos), [] as Set)
+		modifier = new MachineModifier(modifier.machine.withProofs(pos), [] as Set)
 		modifier = modifier.invariant("x < 4")
 
 		then:
@@ -443,7 +443,7 @@ class MachineModifierTest extends Specification {
 			po("inv3/WD")
 		])
 		modifier = modifier.invariant("inv1", "x < 4")
-		modifier = new MachineModifier(modifier.getMachine().set(ProofObligation.class, pos), [] as Set)
+		modifier = new MachineModifier(modifier.machine.withProofs(pos), [] as Set)
 		modifier = modifier.removeInvariant("inv1")
 
 		then:
@@ -684,7 +684,7 @@ class MachineModifierTest extends Specification {
 			evt1,
 			evt2
 		])
-		modifier = new MachineModifier(modifier.getMachine().set(ProofObligation.class, pos), [] as Set)
+		modifier = new MachineModifier(modifier.machine.withProofs(pos), [] as Set)
 		modifier = modifier.event(name: "evt")
 
 		then:
@@ -702,7 +702,7 @@ class MachineModifierTest extends Specification {
 			evt1,
 			evt2
 		])
-		modifier = new MachineModifier(modifier.getMachine().set(ProofObligation.class, pos), [] as Set)
+		modifier = new MachineModifier(modifier.machine.withProofs(pos), [] as Set)
 		modifier = modifier.event(name: "evt2")
 		modifier = modifier.duplicateEvent("evt2", "evt")
 
@@ -783,7 +783,7 @@ class MachineModifierTest extends Specification {
 			po("evt/VAR"),
 			po("evt/NAT")
 		])
-		modifier = new MachineModifier(modifier.getMachine().set(ProofObligation.class, pos), [] as Set)
+		modifier = new MachineModifier(modifier.machine.withProofs(pos), [] as Set)
 		Variant v = new Variant(new EventB("x"),"")
 		modifier = modifier.variant(v)
 
@@ -824,7 +824,7 @@ class MachineModifierTest extends Specification {
 		])
 		Variant v = new Variant(new EventB("x"),"")
 		modifier = modifier.variant(v)
-		modifier = new MachineModifier(modifier.getMachine().set(ProofObligation.class, pos), [] as Set)
+		modifier = new MachineModifier(modifier.machine.withProofs(pos), [] as Set)
 		modifier = modifier.removeVariant(v)
 
 		then:
@@ -899,7 +899,7 @@ class MachineModifierTest extends Specification {
 		modifier = modifier.addComment(comment2)
 
 		then:
-		modifier.getMachine().getChildrenOfType(ElementComment.class).collect { it.getComment() } == [comment1, comment2]
+		modifier.machine.comment == comment1 + "\n" + comment2
 	}
 
 	def "it is possible to add an algorithm"() {

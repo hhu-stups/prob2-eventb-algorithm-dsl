@@ -52,12 +52,12 @@ public class MachineModifier extends AbstractModifier {
 	}
 
 	def MachineModifier setSees(ModelElementList<Context> seenContexts) {
-		newMM(machine.set(Context.class, validate("seenContexts", seenContexts)))
+		newMM(machine.withSees(validate("seenContexts", seenContexts)))
 	}
 
 	def MachineModifier setRefines(EventBMachine refined) {
 		validate("refined", refined)
-		newMM(machine.set(Machine.class, new ModelElementList<EventBMachine>([refined])))
+		newMM(machine.withRefinesMachine(refined))
 	}
 
 	def MachineModifier variables(String... variables) throws ModelGenerationException {
@@ -74,7 +74,7 @@ public class MachineModifier extends AbstractModifier {
 	}
 
 	def MachineModifier variable(EventBVariable variable) throws ModelGenerationException {
-		newMM(machine.addTo(Variable.class, variable))
+		newMM(machine.withVariables(machine.variables.addElement(variable)))
 	}
 
 	def MachineModifier var(LinkedHashMap properties) throws ModelGenerationException {
@@ -102,7 +102,7 @@ public class MachineModifier extends AbstractModifier {
 	}
 
 	def MachineModifier removeVariable(EventBVariable variable) {
-		newMM(machine.removeFrom(Variable.class, variable))
+		newMM(machine.withVariables(machine.variables.removeElement(variable)))
 	}
 
 	def MachineModifier invariants(Map invariants) throws ModelGenerationException {
@@ -174,8 +174,8 @@ public class MachineModifier extends AbstractModifier {
 			inv = new EventBInvariant(uniqueName, invariant.getPredicate(), invariant.isTheorem(), invariant.getComment())
 		}
 
-		machine = machine.addTo(Invariant.class, inv)
-		machine = machine.set(ProofObligation.class, new ModelElementList<ProofObligation>(newproofs))
+		machine = machine.withInvariants(machine.invariants.addElement(inv))
+		machine = machine.withProofs(new ModelElementList<>(newproofs))
 		newMM(machine)
 	}
 
@@ -196,8 +196,8 @@ public class MachineModifier extends AbstractModifier {
 			po.getName().equals("VWD")
 		}
 
-		newMM(machine.removeFrom(Invariant.class, invariant)
-				.set(ProofObligation.class, new ModelElementList<ProofObligation>(newproofs)))
+		newMM(machine.withInvariants(machine.invariants.removeElement(invariant))
+				.withProofs(new ModelElementList<ProofObligation>(newproofs)))
 	}
 
 	def MachineModifier variant(String expression, String comment="") throws ModelGenerationException {
@@ -206,7 +206,7 @@ public class MachineModifier extends AbstractModifier {
 
 	def MachineModifier variant(Variant variant) {
 		def mm = removePOsForVariant()
-		newMM(mm.getMachine().set(Variant.class, new ModelElementList([variant])))
+		newMM(mm.machine.withVariant(variant))
 	}
 
 	def MachineModifier removePOsForVariant() {
@@ -217,15 +217,15 @@ public class MachineModifier extends AbstractModifier {
 					po.getName().endsWith("/NAT"))
 		}
 
-		newMM(machine.set(ProofObligation.class, new ModelElementList<ProofObligation>(newproofs)))
+		newMM(machine.withProofs(new ModelElementList<>(newproofs)))
 	}
 
 	def MachineModifier removeVariant(Variant variant) {
-		if (!machine.getChildrenOfType(Variant.class).contains(variant)) {
+		if (machine.variant != variant) {
 			return this
 		}
 		def mm = removePOsForVariant()
-		newMM(mm.getMachine().removeFrom(Variant.class, variant))
+		newMM(mm.machine.withVariant(null))
 	}
 
 	def MachineModifier initialisation(LinkedHashMap properties, Closure cls={}) throws ModelGenerationException {
@@ -236,7 +236,7 @@ public class MachineModifier extends AbstractModifier {
 	}
 
 	def MachineModifier initialisation(Closure cls, boolean extended=false) throws ModelGenerationException {
-		def refines = machine.getRefines().isEmpty() ? null : "INITIALISATION"
+		def refines = machine.refinesMachine == null ? null : "INITIALISATION"
 		event("INITIALISATION", refines, EventType.ORDINARY, extended, null, validate("cls",cls))
 	}
 
@@ -258,15 +258,15 @@ public class MachineModifier extends AbstractModifier {
 
 	def MachineModifier event(String name, String refinedEvent, EventType type, boolean extended, String comment=null,Closure cls={} ) throws ModelGenerationException {
 		validateAll(name, type, cls)
-		if (refinedEvent && machine.refines.size() != 1) {
+		if (refinedEvent && machine.refinesMachine == null) {
 			throw new IllegalArgumentException("Machine refinement hierarchy is incorrect. Could not find Event $refinedEvent to refine")
 		}
-		if (refinedEvent && !machine.refines[0].getEvent(refinedEvent)) {
+		if (refinedEvent && !machine.refinesMachine.getEvent(refinedEvent)) {
 			throw new IllegalArgumentException("The event $refinedEvent does not exist in the refined machine and therefore cannot be refined in the existing context.")
 		}
 		def event = machine.getEvent(name) ?: new Event(name, type, extended)
 		def em = new EventModifier(event, "INITIALISATION" == name, typeEnvironment).setType(type)
-		em = refinedEvent ? em.refines(machine.refines[0].getEvent(refinedEvent), extended) : em
+		em = refinedEvent ? em.refines(machine.refinesMachine.getEvent(refinedEvent), extended) : em
 		em = em.addComment(comment).make(cls)
 
 		addEvent(em.getEvent())
@@ -276,12 +276,13 @@ public class MachineModifier extends AbstractModifier {
 		if (machine.getEvent(event.getName())) {
 			return replaceEvent(machine.getEvent(event.getName()), event)
 		}
-		newMM(removePOsForEvent(event.getName()).getMachine().addTo(BEvent.class, event))
+		def mm = removePOsForEvent(event.name)
+		newMM(mm.machine.withEvents(mm.machine.events.addElement(event)))
 	}
 
 	def MachineModifier replaceEvent(Event oldEvent, Event newEvent) {
 		def mm = removePOsForEvent(oldEvent.name)
-		newMM(mm.getMachine().replaceIn(BEvent.class, oldEvent, newEvent))
+		newMM(mm.machine.withEvents(mm.machine.events.replaceElement(oldEvent, newEvent)))
 	}
 
 	/**
@@ -313,7 +314,7 @@ public class MachineModifier extends AbstractModifier {
 	 */
 	def MachineModifier removeEvent(Event event) {
 		MachineModifier mm = removePOsForEvent(event.name)
-		newMM(mm.getMachine().removeFrom(BEvent.class, event))
+		newMM(mm.machine.withEvents(mm.machine.events.removeElement(event)))
 	}
 
 	def MachineModifier removePOsForEvent(String name) {
@@ -323,11 +324,16 @@ public class MachineModifier extends AbstractModifier {
 				proofs = proofs.removeElement(it)
 			}
 		}
-		newMM(machine.set(ProofObligation.class, proofs))
+		newMM(machine.withProofs(proofs))
 	}
 
 	def MachineModifier addComment(String comment) {
-		comment ? newMM(machine.addTo(ElementComment.class, new ElementComment(comment))) : this
+		if (!comment) {
+			return this
+		}
+
+		def existingComment = machine.comment
+		newMM(machine.withComment(existingComment == null ? comment : existingComment + "\n" + comment))
 	}
 
 	def MachineModifier algorithm(Closure definition) throws ModelGenerationException {

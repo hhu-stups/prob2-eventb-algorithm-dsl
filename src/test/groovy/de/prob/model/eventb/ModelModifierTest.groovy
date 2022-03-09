@@ -21,8 +21,8 @@ class ModelModifierTest extends Specification {
 		def model2 = mm.getModel()
 
 		then:
-		model1.m2.getRefines() == [model1.m1]
-		model2.m2.getRefines() == [model2.m1]
+		model1.m2.refinesMachine == model1.m1
+		model2.m2.refinesMachine == model2.m1
 	}
 
 	def "adding a machine with a refinement should replace existing refinement (and delete existing relationship)"() {
@@ -39,8 +39,8 @@ class ModelModifierTest extends Specification {
 		def model2 = mm.getModel()
 
 		then:
-		model1.m2.getRefines() == [model1.m1]
-		model2.m2.getRefines() == [model2.m0]
+		model1.m2.refinesMachine == model1.m1
+		model2.m2.refinesMachine == model2.m0
 		model2.m1 != null
 		model2.getRelationship(model2.m2.getName(), model2.m1.getName()) == null
 		model2.getRelationship(model2.m2.getName(), model2.m0.getName()) == ERefType.REFINES
@@ -149,7 +149,7 @@ class ModelModifierTest extends Specification {
 		}
 
 		then:
-		mm.getModel().Lift.getChildrenOfType(ElementComment.class).collect { it.getComment() } == [mycomment]
+		mm.getModel().Lift.comment == mycomment
 	}
 
 	def "if refining a machine, it must already be there"() {
@@ -320,7 +320,7 @@ class ModelModifierTest extends Specification {
 		model2.graph.getIncomingEdges("ctx0").size() == 2
 		model2.graph.getIncomingEdges("ctx1").size() == 1
 		model2.graph.getIncomingEdges("mch1").size() == 0
-		model2.mch1.getRefines().isEmpty()
+		model2.mch1.refinesMachine == null
 	}
 
 	def "deleting context works"() {
@@ -394,7 +394,7 @@ class ModelModifierTest extends Specification {
 		model2.getRelationship("mch1", "ctx0") == ERefType.SEES
 		model2.getRelationship("mch1", "ctx1") == ERefType.SEES
 		model2.getRelationship("mch1", "mymch") == ERefType.REFINES
-		model2.mch1.getRefines() == [m]
+		model2.mch1.refinesMachine == m
 	}
 
 	def "replacing context (2) works"() {

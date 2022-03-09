@@ -16,23 +16,21 @@ import de.be4.eventbalg.core.parser.node.ARefinesEventRefinement;
 import de.be4.eventbalg.core.parser.node.AWitness;
 import de.be4.eventbalg.core.parser.node.TComment;
 import de.be4.eventbalg.core.parser.node.Token;
-
 import de.prob.model.eventb.Event;
 import de.prob.model.eventb.Event.EventType;
 import de.prob.model.eventb.EventBMachine;
 import de.prob.model.eventb.EventModifier;
 import de.prob.model.eventb.ModelGenerationException;
-import de.prob.model.representation.ModelElementList;
 
 import org.eventb.core.ast.extension.IFormulaExtension;
 
 public class EventExtractor extends ElementExtractor {
 
 	private EventModifier eventM;
-	private ModelElementList<EventBMachine> machineRefines;
+	private EventBMachine machineRefines;
 
 	public EventExtractor(final Event event,
-			ModelElementList<EventBMachine> machineRefines,
+			EventBMachine machineRefines,
 			Set<IFormulaExtension> typeEnv, String comment) {
 		super(typeEnv);
 		this.machineRefines = machineRefines;
@@ -96,7 +94,7 @@ public class EventExtractor extends ElementExtractor {
 
 	@Override
 	public void caseARefinesEventRefinement(ARefinesEventRefinement node) {
-		if (machineRefines.isEmpty()) {
+		if (machineRefines == null) {
 			throw new IllegalArgumentException(
 					"Could not find machine refinement although event is marked as a refinement");
 		}
@@ -105,7 +103,7 @@ public class EventExtractor extends ElementExtractor {
 					"The API currently only supports single refinement for events");
 		}
 		String name = node.getNames().get(0).getText();
-		Event event = machineRefines.get(0).getEvent(name);
+		Event event = machineRefines.getEvent(name);
 		if (event == null) {
 			throw new IllegalArgumentException(
 					"Could not find refined event with name " + name);
@@ -115,12 +113,12 @@ public class EventExtractor extends ElementExtractor {
 
 	@Override
 	public void caseAExtendedEventRefinement(final AExtendedEventRefinement node) {
-		if (machineRefines.isEmpty()) {
+		if (machineRefines == null) {
 			throw new IllegalArgumentException(
 					"Could not find machine refinement although event is marked as a refinement");
 		}
 		String name = node.getName().getText();
-		Event event = machineRefines.get(0).getEvent(name);
+		Event event = machineRefines.getEvent(name);
 		if (event == null) {
 			throw new IllegalArgumentException(
 					"Could not find refined event with name " + name);

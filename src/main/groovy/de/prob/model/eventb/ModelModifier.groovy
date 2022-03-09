@@ -11,7 +11,6 @@ import de.prob.model.eventb.theory.Theory
 import de.prob.model.eventb.translate.TheoryExtractor
 import de.prob.model.representation.DependencyGraph.Edge;
 import de.prob.model.representation.ElementComment
-import de.prob.model.representation.Machine
 import de.prob.model.representation.ModelElementList
 import de.prob.model.representation.DependencyGraph.ERefType
 import de.prob.scripting.EventBFactory
@@ -100,9 +99,8 @@ public class ModelModifier extends AbstractModifier {
 			throw new IllegalArgumentException("Can only refine an existing machine in the model")
 		}
 
-		def comment = m.getChildrenOfType(ElementComment.class) ? m.getChildrenOfType(ElementComment.class).collect { it.comment }.join("\n") : null
 		def sees = m.getSees().collect { it.getName() }
-		ModelModifier modelM = machine(name: refinementName, refines: machineName, sees: sees, comment: comment) {
+		ModelModifier modelM = machine(name: refinementName, refines: machineName, sees: sees, comment: m.comment) {
 			m.variables.each { variable(it) }
 			m.events.each { Event e ->
 				refine(name: e.getName(), extended: true, type: e.getType(),
@@ -136,7 +134,7 @@ public class ModelModifier extends AbstractModifier {
 				m = newMM(m).replaceContext(ctx, ctx2).getModel()
 			} else if (e.relationship == ERefType.SEES) {
 				EventBMachine mch = m.getMachine(e.getFrom().getElementName())
-				EventBMachine mch2 = mch.removeFrom(Context.class, context)
+				EventBMachine mch2 = mch.withSees(mch.sees.removeElement(context))
 				m = newMM(m).replaceMachine(mch, mch2).getModel()
 			}
 		}
@@ -149,7 +147,7 @@ public class ModelModifier extends AbstractModifier {
 		m.graph.getIncomingEdges(machine.getName()).each { Edge e ->
 			if (e.relationship == ERefType.REFINES) {
 				EventBMachine mch = m.getMachine(e.getFrom().getElementName())
-				EventBMachine mch2 = mch.removeFrom(Machine.class, machine)
+				EventBMachine mch2 = mch.withRefinesMachine(null)
 				m = newMM(m).replaceMachine(mch, mch2).getModel()
 			}
 		}
@@ -166,7 +164,7 @@ public class ModelModifier extends AbstractModifier {
 				m = newMM(m).replaceContext(ctx, ctx2).getModel()
 			} else if (e.relationship == ERefType.SEES) {
 				EventBMachine mch = m.getMachine(e.getFrom().getElementName())
-				EventBMachine mch2 = mch.replaceIn(Context.class, oldContext, newContext)
+				EventBMachine mch2 = mch.withSees(mch.sees.replaceElement(oldContext, newContext))
 				m = newMM(m).replaceMachine(mch, mch2).getModel()
 			}
 		}
@@ -179,7 +177,7 @@ public class ModelModifier extends AbstractModifier {
 		m.graph.getIncomingEdges(oldMachine.getName()).each { Edge e ->
 			if (e.relationship == ERefType.REFINES) {
 				EventBMachine ma = m.getMachine(e.getFrom().getElementName())
-				EventBMachine ma2 = ma.replaceIn(Machine.class, oldMachine, newMachine)
+				EventBMachine ma2 = ma.withRefinesMachine(newMachine)
 				m = newMM(m).replaceMachine(ma, ma2).getModel()
 			}
 		}
