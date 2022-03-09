@@ -76,6 +76,10 @@ tasks.withType(Javadoc) {
 
 // The Groovydoc encoding can't be set via the task, it depends on the file.encoding system property of the Gradle JVM, which is set in the gradle.properties file.
 
+test {
+	useJUnitPlatform()
+}
+
 task groovyIntegrationTests(type: JavaExec, dependsOn: [classes, test]) {
 	mainClass = "de.prob2.commandline.CommandLineMain"
 	classpath = sourceSets.test.runtimeClasspath
