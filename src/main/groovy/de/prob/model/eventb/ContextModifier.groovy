@@ -19,7 +19,7 @@ public class ContextModifier extends AbstractModifier {
 
 	def ContextModifier setExtends(Context extended) {
 		validate("extended", extended)
-		newCM(context.set(Context.class, new ModelElementList<Context>([extended])))
+		newCM(context.withExtends(new ModelElementList<>([extended])))
 	}
 
 	def ContextModifier enumerated_set(LinkedHashMap properties) throws ModelGenerationException {
