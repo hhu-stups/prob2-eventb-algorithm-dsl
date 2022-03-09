@@ -816,7 +816,7 @@ class EventModifierTest extends Specification {
 		modifier = modifier.addComment(mycomment)
 
 		then:
-		modifier.getEvent().getChildrenOfType(ElementComment.class).collect { it.getComment() } == [mycomment]
+		modifier.event.comment == mycomment
 	}
 
 	def "adding empty or null comment does nothing"() {

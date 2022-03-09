@@ -27,7 +27,7 @@ public class EventModifier extends AbstractModifier {
 	def EventModifier refines(Event refinedEvent, boolean extended) {
 		validate('refinedEvent', refinedEvent)
 		Event e = event.toggleExtended(extended)
-		e = e.set(Event.class, new ModelElementList<Event>([refinedEvent]))
+		e = e.withRefinesEvent(refinedEvent)
 		if (extended) {
 			def actions = refinedEvent.getAllActions()
 			if (e.actions) {
@@ -36,7 +36,7 @@ public class EventModifier extends AbstractModifier {
 					def newA = newName == a.getName() ? a : new EventBAction(newName, a.getCode(), a.getComment())
 					added << newA
 				}
-				e = e.set(Action.class, new ModelElementList<EventBAction>(acts))
+				e = e.withActions(new ModelElementList<>(acts))
 			}
 			def guards = refinedEvent.getAllGuards()
 			if (e.guards) {
@@ -45,7 +45,7 @@ public class EventModifier extends AbstractModifier {
 					def newG = newName == g.getName() ? g : new EventBGuard(newName, g.getPredicate(), g.isTheorem(), g.getComment())
 					added << newG
 				}
-				e = e.set(Guard.class, new ModelElementList<EventBGuard>(grds))
+				e = e.withGuards(new ModelElementList<>(grds))
 			}
 		}
 		newEM(e)
@@ -114,7 +114,7 @@ public class EventModifier extends AbstractModifier {
 		}
 		def n = validate('name', name)
 		def guard = new EventBGuard(getUniqueName(n, event.getAllGuards()), ensureType(pred, EvalElementType.PREDICATE), theorem, comment)
-		newEM(event.addTo(Guard.class, guard))
+		newEM(event.withGuards(event.guards.addElement(guard)))
 	}
 
 	def EventModifier removeGuard(String name) {
@@ -128,7 +128,7 @@ public class EventModifier extends AbstractModifier {
 	 * @return whether or not the removal was successful
 	 */
 	def EventModifier removeGuard(EventBGuard guard) {
-		newEM(event.removeFrom(Guard.class, guard))
+		newEM(event.withGuards(event.guards.removeElement(guard)))
 	}
 
 	def EventModifier then(LinkedHashMap assignments) throws ModelGenerationException {
@@ -179,7 +179,7 @@ public class EventModifier extends AbstractModifier {
 	}
 
 	def EventModifier action(EventBAction act) {
-		newEM(event.addTo(Action.class, act))
+		newEM(event.withActions(event.actions.addElement(act)))
 	}
 
 	def EventModifier removeAction(String name) {
@@ -193,7 +193,7 @@ public class EventModifier extends AbstractModifier {
 	 * @return whether or not the removal was successful
 	 */
 	def EventModifier removeAction(EventBAction action) {
-		newEM(event.removeFrom(Action.class, action))
+		newEM(event.withActions(event.actions.removeElement(action)))
 	}
 
 	def EventModifier any(String... params) throws ModelGenerationException {
@@ -214,7 +214,7 @@ public class EventModifier extends AbstractModifier {
 		}
 		parseIdentifier(parameter)
 		def param = new EventParameter(parameter, comment)
-		newEM(event.addTo(EventParameter.class, param))
+		newEM(event.withParameters(event.parameters.addElement(param)))
 	}
 
 	def EventModifier removeParameter(String name) {
@@ -223,7 +223,7 @@ public class EventModifier extends AbstractModifier {
 	}
 
 	def EventModifier removeParameter(EventParameter parameter) {
-		newEM(event.removeFrom(EventParameter.class, parameter))
+		newEM(event.withParameters(event.parameters.removeElement(parameter)))
 	}
 
 	def EventModifier with(String name, String predicate) throws ModelGenerationException {
@@ -238,7 +238,7 @@ public class EventModifier extends AbstractModifier {
 		def EventModifier witness(String name, String predicate, String comment="") throws ModelGenerationException {
 		parseIdentifier(name) // the label for a witness must be an abstract variable
 		def w = new Witness(name, parsePredicate(predicate), comment)
-		newEM(event.addTo(Witness.class, w))
+		newEM(event.withWitnesses(event.witnesses.addElement(w)))
 	}
 
 	def EventModifier removeWitness(String name) {
@@ -247,7 +247,7 @@ public class EventModifier extends AbstractModifier {
 	}
 
 	def EventModifier removeWitness(Witness w) {
-		newEM(event.removeFrom(Witness.class, w))
+		newEM(event.withWitnesses(event.witnesses.removeElement(w)))
 	}
 
 	def EventModifier setType(EventType type) {
@@ -255,7 +255,12 @@ public class EventModifier extends AbstractModifier {
 	}
 
 	def EventModifier addComment(String comment) {
-		comment ? newEM(event.addTo(ElementComment.class, new ElementComment(comment))) : this
+		if (!comment) {
+			return this
+		}
+
+		def existingComment = event.comment
+		newEM(event.withComment(existingComment == null ? comment : existingComment + "\n" + comment))
 	}
 
 	def EventModifier make(Closure definition) throws ModelGenerationException {

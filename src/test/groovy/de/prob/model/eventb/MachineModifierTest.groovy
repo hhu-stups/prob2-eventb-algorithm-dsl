@@ -492,7 +492,7 @@ class MachineModifierTest extends Specification {
 		def modifier = modifier.event(name: "myevent", comment: mycomment) {}
 
 		then:
-		modifier.getMachine().events.myevent.getChildrenOfType(ElementComment.class).collect { it.getComment() } == [mycomment]
+		modifier.machine.events.myevent.comment == mycomment
 	}
 
 	def "it is possible to duplicate an event and add its duplicate to the machine"() {
@@ -617,10 +617,10 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.getChildrenOfType(Event.class).isEmpty()
+		evt.refinesEvent == null
 		!evt.isExtended()
 		evt.getType() == EventType.ORDINARY
-		evt.getChildrenOfType(ElementComment.class).isEmpty()
+		evt.comment == null
 	}
 
 	def "add event from map description"() {
@@ -629,10 +629,10 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.getChildrenOfType(Event.class).isEmpty()
+		evt.refinesEvent == null
 		!evt.isExtended()
 		evt.getType() == EventType.ORDINARY
-		evt.getChildrenOfType(ElementComment.class).isEmpty()
+		evt.comment == null
 	}
 
 	def "it is possible to add an event"() {
@@ -641,10 +641,10 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.getChildrenOfType(Event.class).isEmpty()
+		evt.refinesEvent == null
 		!evt.isExtended()
 		evt.getType() == EventType.ORDINARY
-		evt.getChildrenOfType(ElementComment.class).isEmpty()
+		evt.comment == null
 		evt.getActions()[0].getCode().getCode() == "x := 1"
 	}
 
@@ -654,10 +654,10 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.getChildrenOfType(Event.class).isEmpty()
+		evt.refinesEvent == null
 		!evt.isExtended()
 		evt.getType() == EventType.ORDINARY
-		evt.getChildrenOfType(ElementComment.class).isEmpty()
+		evt.comment == null
 	}
 
 	def "it is possible to add an event (3)"() {
@@ -667,10 +667,10 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.getChildrenOfType(Event.class).isEmpty()
+		evt.refinesEvent == null
 		!evt.isExtended()
 		evt.getType() == EventType.ORDINARY
-		evt.getChildrenOfType(ElementComment.class).collect { it.getComment() } == [mycomment]
+		evt.comment == mycomment
 	}
 
 	def "adding event removes correct POs"() {
