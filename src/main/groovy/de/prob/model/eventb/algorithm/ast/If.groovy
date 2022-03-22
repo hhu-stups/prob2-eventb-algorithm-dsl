@@ -1,10 +1,9 @@
 package de.prob.model.eventb.algorithm.ast
 
-import org.eventb.core.ast.extension.IFormulaExtension
-
 import de.prob.animator.domainobjects.EventB
 import de.prob.model.eventb.ModelGenerationException
-import de.prob.model.representation.IllegalModificationException
+
+import org.eventb.core.ast.extension.IFormulaExtension
 
 public class If extends Statement {
 	def final EventB condition
@@ -34,7 +33,7 @@ public class If extends Statement {
 
 	def If Then(String... assignments) {
 		if(Then != null) {
-			throw new IllegalModificationException("The Then block of this If statement has already been defined. Cannot be redefined.")
+			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
 		assignments.inject(newBlock()) { Block b, String assignment ->
 			b.Assign(assignment)
@@ -46,21 +45,21 @@ public class If extends Statement {
 
 	def If Then(Closure definition) {
 		if(Then != null) {
-			throw new IllegalModificationException("The Then block of this If statement has already been defined. Cannot be redefined.")
+			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
 		newIf(newBlock().make(definition), Else)
 	}
 
 	def If Then(Block block) {
 		if(Then != null) {
-			throw new IllegalModificationException("The Then block of this If statement has already been defined. Cannot be redefined.")
+			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
 		newIf(block, Else)
 	}
 
 	def If Else(String... assignments) {
 		if(Else != null) {
-			throw new IllegalModificationException("The Then block of this If statement has already been defined. Cannot be redefined.")
+			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
 		newIf(Then, assignments.inject(newBlock()) { Block b, String assignment ->
 			b.Assign(assignment)
@@ -69,14 +68,14 @@ public class If extends Statement {
 
 	def If Else(Closure definition) {
 		if(Else != null) {
-			throw new IllegalModificationException("The Then block of this If statement has already been defined. Cannot be redefined.")
+			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
 		newIf(Then, newBlock().make(definition))
 	}
 
 	def If Else(Block block) {
 		if(Else != null) {
-			throw new IllegalModificationException("The Then block of this If statement has already been defined. Cannot be redefined.")
+			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
 		newIf(Then, block)
 	}
