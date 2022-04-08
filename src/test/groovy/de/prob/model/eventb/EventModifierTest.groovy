@@ -54,7 +54,7 @@ class EventModifierTest extends Specification {
 		modifier = modifier.refines(event, false)
 
 		then:
-		modifier.getEvent().getRefines() == [event]
+		modifier.event.refinesEvent == event
 	}
 
 	def "refines cannot be null"() {

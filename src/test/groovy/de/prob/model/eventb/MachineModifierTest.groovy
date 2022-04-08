@@ -545,7 +545,7 @@ class MachineModifierTest extends Specification {
 		def machine = modifier.getMachine()
 
 		then:
-		machine.events.INITIALISATION.getRefines() == [refinedinit]
+		machine.events.INITIALISATION.refinesEvent == refinedinit
 	}
 
 	def "when refining events, the correct refined event is selected"() {
@@ -561,7 +561,7 @@ class MachineModifierTest extends Specification {
 		def machine = modifier.getMachine()
 
 		then:
-		machine.events.inc.getRefines() == [inc]
+		machine.events.inc.refinesEvent == inc
 	}
 
 	def "when refining events with closure, the correct refined event is selected"() {
@@ -577,7 +577,7 @@ class MachineModifierTest extends Specification {
 		def machine = modifier.getMachine()
 
 		then:
-		machine.events.inc.getRefines() == [inc]
+		machine.events.inc.refinesEvent == inc
 	}
 
 	def "when refining an event, it must exist in the refinement"() {
