@@ -13,7 +13,7 @@ class EventModifierTest extends Specification {
 	private EventModifier modifier
 
 	def setup() {
-		event = new Event("myEvent", EventType.ORDINARY, false)
+		event = new Event("myEvent", EventType.ORDINARY, Event.Inheritance.NONE)
 		modifier = new EventModifier(event)
 	}
 
@@ -50,11 +50,11 @@ class EventModifierTest extends Specification {
 
 	def "it is possible to set a refined event"() {
 		when:
-		def event = new Event("RefinedEvent", EventType.ORDINARY, false)
+		def event = new Event("RefinedEvent", EventType.ORDINARY, Event.Inheritance.NONE)
 		modifier = modifier.refines(event, false)
 
 		then:
-		modifier.event.refinesEvent == event
+		modifier.event.parentEvent == event
 	}
 
 	def "refines cannot be null"() {
@@ -102,7 +102,7 @@ class EventModifierTest extends Specification {
 
 	def "it is not possible to add a guard to initialisation"() {
 		when:
-		def em = new EventModifier(new Event("myEvent", EventType.ORDINARY, false), true)
+		def em = new EventModifier(new Event("myEvent", EventType.ORDINARY, Event.Inheritance.NONE), true)
 		em.guard("grd", "x < 4")
 
 		then:
@@ -111,7 +111,7 @@ class EventModifierTest extends Specification {
 
 	def "it is not possible to add an EventB guard to initialisation"() {
 		when:
-		def em = new EventModifier(new Event("myEvent", EventType.ORDINARY, false), true)
+		def em = new EventModifier(new Event("myEvent", EventType.ORDINARY, Event.Inheritance.NONE), true)
 		em.guard("grd", new EventB("x < 4"))
 
 		then:
@@ -572,7 +572,7 @@ class EventModifierTest extends Specification {
 
 	def "it is not possible to add a parameter to initialisation"() {
 		when:
-		def em = new EventModifier(new Event("myEvent", EventType.ORDINARY, false), true)
+		def em = new EventModifier(new Event("myEvent", EventType.ORDINARY, Event.Inheritance.NONE), true)
 		em.parameter("x")
 
 		then:
@@ -946,7 +946,7 @@ class EventModifierTest extends Specification {
 
 	def "refined events cause the event counter to be modified"() {
 		when:
-		Event refined = new EventModifier(new Event("refined", EventType.ORDINARY, false)).make {
+		Event refined = new EventModifier(new Event("refined", EventType.ORDINARY, Event.Inheritance.NONE)).make {
 			when "x < y", "y < 6"
 			then "x := x + 1", "y := y + 1", "z := z + 1"
 		}.getEvent()
@@ -967,7 +967,7 @@ class EventModifierTest extends Specification {
 
 	def "adding a refined event will rename existing actions"() {
 		when:
-		Event refined = new EventModifier(new Event("refined", EventType.ORDINARY, false)).make {
+		Event refined = new EventModifier(new Event("refined", EventType.ORDINARY, Event.Inheritance.NONE)).make {
 			when "x < y", "y < 6"
 			then "x := x + 1", "y := y + 1", "z := z + 1"
 		}.getEvent()
@@ -992,7 +992,7 @@ class EventModifierTest extends Specification {
 
 	def "renaming will only happen if necessary be changed"() {
 		when:
-		Event refined = new EventModifier(new Event("refined", EventType.ORDINARY, false)).make {
+		Event refined = new EventModifier(new Event("refined", EventType.ORDINARY, Event.Inheritance.NONE)).make {
 			when blah: "x < y", grd1: "y < 6"
 			then foo: "x := x + 1", act0: "y := y + 1", act97: "z := z + 1"
 		}.getEvent()
@@ -1017,7 +1017,7 @@ class EventModifierTest extends Specification {
 
 	def "adding a an empty refined event will not affect naming"() {
 		when:
-		Event refined = new Event("refined", EventType.ORDINARY, false)
+		Event refined = new Event("refined", EventType.ORDINARY, Event.Inheritance.NONE)
 		def refacts = refined.actions.collect { it.getName() }
 		def refgrds = refined.guards.collect { it.getName() }
 		modifier = modifier.make {

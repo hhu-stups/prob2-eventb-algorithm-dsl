@@ -44,7 +44,7 @@ class Procedure extends AbstractModifier implements Named {
 		def sees = new ModelElementList<Context>([contextM.getContext()])
 		this.absM = new MachineModifier(new EventBMachine(name+ABSTRACT_SUFFIX), typeEnvironment).setSees(sees).var("apc", [grd_apc: "apc : NAT"], [act_apc: "apc := 0"])
 		this.concreteM = new MachineModifier(new EventBMachine(name+IMPL_SUFFIX), typeEnvironment).setSees(sees).setRefines(absM.getMachine())
-		this.eventM = new EventModifier(new Event(name, EventType.ORDINARY, false), false, typeEnvironment).guard("grd_apc", "apc = 0").action("act_apc", "apc := 1")
+		this.eventM = new EventModifier(new Event(name, EventType.ORDINARY, Event.Inheritance.NONE), false, typeEnvironment).guard("grd_apc", "apc = 0").action("act_apc", "apc := 1")
 	}
 
 	def Procedure(String name, Set<IFormulaExtension> typeEnv, ModelElementList<String> arguments,

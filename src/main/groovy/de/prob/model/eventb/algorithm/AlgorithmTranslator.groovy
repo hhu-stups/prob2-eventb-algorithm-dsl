@@ -160,7 +160,7 @@ class AlgorithmTranslator {
 		List<Edge> oEdges = graph.outEdges(stmt).sort { Edge a, Edge b -> pcs[a.to] <=> pcs[b.to] }
 		oEdges.each { final Edge e ->
 			String eventName = e.getName(n)
-			EventModifier em = new EventModifier(new Event(eventName, EventType.ORDINARY, false))
+			EventModifier em = new EventModifier(new Event(eventName, EventType.ORDINARY, Event.Inheritance.NONE))
 					.addComment(e.rep())
 					.guard("$pcname = ${pcs[stmt]}")
 			e.conditions.each { em = em.guard(it.getSecond()) }

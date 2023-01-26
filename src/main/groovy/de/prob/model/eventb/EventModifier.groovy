@@ -26,8 +26,8 @@ public class EventModifier extends AbstractModifier {
 
 	def EventModifier refines(Event refinedEvent, boolean extended) {
 		validate('refinedEvent', refinedEvent)
-		Event e = event.toggleExtended(extended)
-		e = e.withRefinesEvent(refinedEvent)
+		Event e = event.changeInheritance(extended ? Event.Inheritance.EXTENDS : Event.Inheritance.REFINES)
+		e = e.withParentEvent(refinedEvent)
 		if (extended) {
 			def actions = refinedEvent.getAllActions()
 			if (e.actions) {

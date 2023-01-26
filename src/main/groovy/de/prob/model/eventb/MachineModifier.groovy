@@ -264,7 +264,7 @@ public class MachineModifier extends AbstractModifier {
 		if (refinedEvent && !machine.refinesMachine.getEvent(refinedEvent)) {
 			throw new IllegalArgumentException("The event $refinedEvent does not exist in the refined machine and therefore cannot be refined in the existing context.")
 		}
-		def event = machine.getEvent(name) ?: new Event(name, type, extended)
+		def event = machine.getEvent(name) ?: new Event(name, type, extended ? Event.Inheritance.EXTENDS : Event.Inheritance.NONE)
 		def em = new EventModifier(event, "INITIALISATION" == name, typeEnvironment).setType(type)
 		em = refinedEvent ? em.refines(machine.refinesMachine.getEvent(refinedEvent), extended) : em
 		em = em.addComment(comment).make(cls)

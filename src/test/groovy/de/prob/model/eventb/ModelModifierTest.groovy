@@ -135,9 +135,9 @@ class ModelModifierTest extends Specification {
 		then:
 		model.getRelationship("Lift2","Lift") == ERefType.REFINES
 		model.Lift.variables == model.Lift2.variables
-		model.Lift2.events.INITIALISATION.isExtended()
-		model.Lift2.events.up.isExtended()
-		model.Lift2.events.down.isExtended()
+		model.Lift2.events.INITIALISATION.inheritance == Event.Inheritance.EXTENDS
+		model.Lift2.events.up.inheritance == Event.Inheritance.EXTENDS
+		model.Lift2.events.down.inheritance == Event.Inheritance.EXTENDS
 	}
 
 	def "adding a machine with a comment works"() {

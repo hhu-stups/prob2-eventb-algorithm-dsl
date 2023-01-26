@@ -523,7 +523,7 @@ class MachineModifierTest extends Specification {
 
 		then:
 		modifier.getMachine().events
-		modifier.getMachine().events.INITIALISATION.isExtended()
+		modifier.getMachine().events.INITIALISATION.inheritance == Event.Inheritance.EXTENDS
 	}
 
 	def "it if extended is not set for initialisation, nothing happens"() {
@@ -545,7 +545,7 @@ class MachineModifierTest extends Specification {
 		def machine = modifier.getMachine()
 
 		then:
-		machine.events.INITIALISATION.refinesEvent == refinedinit
+		machine.events.INITIALISATION.parentEvent == refinedinit
 	}
 
 	def "when refining events, the correct refined event is selected"() {
@@ -561,7 +561,7 @@ class MachineModifierTest extends Specification {
 		def machine = modifier.getMachine()
 
 		then:
-		machine.events.inc.refinesEvent == inc
+		machine.events.inc.parentEvent == inc
 	}
 
 	def "when refining events with closure, the correct refined event is selected"() {
@@ -577,7 +577,7 @@ class MachineModifierTest extends Specification {
 		def machine = modifier.getMachine()
 
 		then:
-		machine.events.inc.refinesEvent == inc
+		machine.events.inc.parentEvent == inc
 	}
 
 	def "when refining an event, it must exist in the refinement"() {
@@ -617,8 +617,8 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.refinesEvent == null
-		!evt.isExtended()
+		evt.parentEvent == null
+		evt.inheritance == Event.Inheritance.NONE
 		evt.getType() == EventType.ORDINARY
 		evt.comment == null
 	}
@@ -629,8 +629,8 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.refinesEvent == null
-		!evt.isExtended()
+		evt.parentEvent == null
+		evt.inheritance == Event.Inheritance.NONE
 		evt.getType() == EventType.ORDINARY
 		evt.comment == null
 	}
@@ -641,8 +641,8 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.refinesEvent == null
-		!evt.isExtended()
+		evt.parentEvent == null
+		evt.inheritance == Event.Inheritance.NONE
 		evt.getType() == EventType.ORDINARY
 		evt.comment == null
 		evt.getActions()[0].getCode().getCode() == "x := 1"
@@ -654,8 +654,8 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.refinesEvent == null
-		!evt.isExtended()
+		evt.parentEvent == null
+		evt.inheritance == Event.Inheritance.NONE
 		evt.getType() == EventType.ORDINARY
 		evt.comment == null
 	}
@@ -667,8 +667,8 @@ class MachineModifierTest extends Specification {
 		Event evt = modifier.getMachine().events.myevt
 
 		then:
-		evt.refinesEvent == null
-		!evt.isExtended()
+		evt.parentEvent == null
+		evt.inheritance == Event.Inheritance.NONE
 		evt.getType() == EventType.ORDINARY
 		evt.comment == mycomment
 	}
