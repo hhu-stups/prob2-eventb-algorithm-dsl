@@ -1,12 +1,10 @@
 package de.prob.model.eventb.algorithm.ast.transform
 
-import de.prob.animator.domainobjects.EventB
 import de.prob.model.eventb.algorithm.Procedure
 import de.prob.model.eventb.algorithm.ast.Block
 import de.prob.model.eventb.algorithm.ast.Statement
 import de.prob.model.eventb.algorithm.graph.NodeNaming
 import de.prob.model.representation.ModelElementList
-import de.prob.util.Tuple2
 
 import spock.lang.Specification
 
@@ -20,12 +18,12 @@ class AssertionPropagatorTest extends Specification {
 		NodeNaming n = new NodeNaming(b)
 		AssertionPropagator ap = new AssertionPropagator(new ModelElementList<Procedure>())
 		ap.traverse(b)
-		ap.assertionMap.collectEntries { Statement stmt, List<Tuple2<List<EventB>,EventB>> v ->
-			def formulas = v.collect { Tuple2<List<EventB>,EventB> f ->
-				if (f.first.isEmpty()) {
-					return f.second.getCode()
+		ap.assertionMap.collectEntries { Statement stmt, List<PropagatedAssertion> v ->
+			def formulas = v.collect { PropagatedAssertion f ->
+				if (f.conditions.isEmpty()) {
+					return f.assertion.getCode()
 				}
-				return f.first.collect { it.getCode() }.iterator().join(" & ") + " => ("+f.second.getCode() + ")"
+				return f.conditions.collect { it.getCode() }.iterator().join(" & ") + " => ("+f.assertion.getCode() + ")"
 			}
 			[n.getName(stmt), formulas]
 		}

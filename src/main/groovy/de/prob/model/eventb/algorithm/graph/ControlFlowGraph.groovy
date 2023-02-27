@@ -13,7 +13,6 @@ import de.prob.model.eventb.algorithm.ast.Return
 import de.prob.model.eventb.algorithm.ast.Skip
 import de.prob.model.eventb.algorithm.ast.Statement
 import de.prob.model.eventb.algorithm.ast.While
-import de.prob.util.Tuple2
 
 class ControlFlowGraph {
 
@@ -102,7 +101,7 @@ class ControlFlowGraph {
 		return new ControlFlowGraph(algorithm, entryNode, lastNode, nodes, edges)
 	}
 
-	def ControlFlowGraph addEdge(Statement from, Statement to, PersistentVector<Tuple2<Statement, EventB>> conditions) {
+	def ControlFlowGraph addEdge(Statement from, Statement to, PersistentVector<ConditionalStatement> conditions) {
 		addEdge(new Edge(from, to, conditions))
 	}
 
@@ -165,8 +164,8 @@ class ControlFlowGraph {
 		addNode(stmts.first(), stmts.tail())
 	}
 
-	def PersistentVector<Tuple2<Statement,EventB>> newCondition(Statement s, EventB condition) {
-		PersistentVector.emptyVector().plus(new Tuple2<Statement,EventB>(s,condition))
+	def PersistentVector<ConditionalStatement> newCondition(Statement s, EventB condition) {
+		PersistentVector.emptyVector().plus(new ConditionalStatement(s,condition))
 	}
 
 	def addNode(While w, List<Statement> stmts) {

@@ -17,7 +17,7 @@ import de.prob.model.eventb.algorithm.ast.Statement
 import de.prob.model.eventb.algorithm.ast.While
 import de.prob.model.eventb.algorithm.ast.transform.AssertionExtractor
 import de.prob.model.eventb.algorithm.ast.transform.AssertionPropagator
-import de.prob.util.Tuple2
+import de.prob.model.eventb.algorithm.ast.transform.PropagatedAssertion
 
 /**
  * Translates assertions and assumptions
@@ -31,7 +31,7 @@ class AssertionTranslator extends AlgorithmASTVisitor {
 	def Map<Statement, Integer> pcInfo
 	Map<String, Integer> assertCtr = [:]
 	Map<Statement, List<Assertion>> properties
-	Map<Statement, List<Tuple2<List<EventB>,EventB>>> propagated
+	Map<Statement, List<PropagatedAssertion>> propagated
 	def NodeNaming names
 	String pcname
 
@@ -64,7 +64,7 @@ class AssertionTranslator extends AlgorithmASTVisitor {
 		machineM = writeAssertions(machineM, w, prefix)
 		if (propagated[w]) {
 			// If you want to eliminate possible duplicate assertions:
-			//def toTranslate = propagated[w].findAll { !optimized || it.getFirst() != [w.notCondition]}
+			//def toTranslate = propagated[w].findAll { !optimized || it.conditions != [w.notCondition]}
 			//machineM = writePropagated(machineM, toTranslate, prefix)
 			machineM = writePropagated(machineM, propagated[w], prefix)
 		}
@@ -82,9 +82,9 @@ class AssertionTranslator extends AlgorithmASTVisitor {
 			// only enter this loop when there are actually assertions to print. performance reasons
 			Set<Edge> allEdges = graph.edges
 			Set<List<EventB>> conds = [] as Set
-			allEdges.findAll { Edge e -> e.conditions.contains(new Tuple2<Statement, EventB>(stmt, stmt.condition)) }.each { Edge e ->
-				def i = e.conditions.indexOf(new Tuple2<Statement, EventB>(stmt, stmt.condition))
-				def cond = e.conditions[0..i-1].collect { it.getSecond() }
+			allEdges.findAll { Edge e -> e.conditions.contains(new ConditionalStatement(stmt, stmt.condition)) }.each { Edge e ->
+				def i = e.conditions.indexOf(new ConditionalStatement(stmt, stmt.condition))
+				def cond = e.conditions[0..i-1].collect {it.condition}
 				if (!conds.contains(cond)) {
 					conds << cond
 					def pred = "$pcname = ${pcInfo[e.from]}"
@@ -134,7 +134,7 @@ class AssertionTranslator extends AlgorithmASTVisitor {
 			Set<Edge> allEdges = graph.edges
 			Set<List<EventB>> conds = [] as Set
 			allEdges.findAll { Edge e -> e.assignment == s }.each { Edge e ->
-				def cond = e.conditions.collect { it.getSecond() }
+				def cond = e.conditions.collect {it.condition}
 				if (!conds.contains(cond)) {
 					conds << cond
 					def pred = "$pcname = ${pcInfo[e.from]}"
@@ -178,10 +178,10 @@ class AssertionTranslator extends AlgorithmASTVisitor {
 		machineM = machineM.invariant(getName(name), formula)
 	}
 
-	def MachineModifier writePropagated(MachineModifier machineM, List<Tuple2<List<EventB>,EventB>> properties, String prefix) {
-		properties.inject(machineM) { MachineModifier mm, Tuple2<List<EventB>,EventB> prop ->
-			def preds = [prefix]+ prop.getFirst().collect { it.getCode() }
-			def formula = preds.iterator().join(" & ") + " => (${prop.getSecond().getCode()})"
+	def MachineModifier writePropagated(MachineModifier machineM, List<PropagatedAssertion> properties, String prefix) {
+		properties.inject(machineM) { MachineModifier mm, PropagatedAssertion prop ->
+			def preds = [prefix]+ prop.conditions.collect { it.getCode() }
+			def formula = preds.iterator().join(" & ") + " => (${prop.assertion.getCode()})"
 			mm.invariant(getName("assert_gen"), formula)
 		}
 	}

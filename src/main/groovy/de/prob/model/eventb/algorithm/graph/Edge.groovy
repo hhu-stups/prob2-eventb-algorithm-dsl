@@ -1,4 +1,4 @@
-package de.prob.model.eventb.algorithm.graph;
+package de.prob.model.eventb.algorithm.graph
 
 import com.github.krukow.clj_lang.PersistentVector
 
@@ -8,23 +8,21 @@ import de.prob.model.eventb.algorithm.ast.If
 import de.prob.model.eventb.algorithm.ast.Skip
 import de.prob.model.eventb.algorithm.ast.Statement
 import de.prob.model.eventb.algorithm.ast.While
-import de.prob.util.Tuple2
-
 
 public class Edge {
 	def final Statement from
 	def final Statement to
-	def final PersistentVector<Tuple2<Statement, EventB>> conditions
+	def final PersistentVector<ConditionalStatement> conditions
 	def final IAssignment assignment
 
-	def Edge(Statement from, Statement to, PersistentVector<Tuple2<Statement, EventB>> conditions) {
+	def Edge(Statement from, Statement to, PersistentVector<ConditionalStatement> conditions) {
 		this.from = from
 		this.to = to
 		this.conditions = conditions
 		this.assignment = from instanceof IAssignment ? from : null
 	}
 
-	def Edge(Statement from, Statement to, PersistentVector<Tuple2<Statement, EventB>> conditions, IAssignment assignment) {
+	def Edge(Statement from, Statement to, PersistentVector<ConditionalStatement> conditions, IAssignment assignment) {
 		this.from = from
 		this.to = to
 		this.conditions = conditions
@@ -44,7 +42,7 @@ public class Edge {
 	public Edge mergeConditions(Edge that) {
 		assert this.assignment == null
 		def conditions = this.conditions
-		that.conditions.each { Tuple2<Statement, EventB> cond ->
+		that.conditions.each { ConditionalStatement cond ->
 			conditions = conditions.plus(cond)
 		}
 		return new Edge(from, that.to, conditions, that.assignment)
@@ -53,7 +51,7 @@ public class Edge {
 	public Edge mergeAssignment(Edge that) {
 		assert this.assignment == null && that.assignment != null
 		def conditions = this.conditions
-		that.conditions.each { Tuple2<Statement, EventB> cond ->
+		that.conditions.each { ConditionalStatement cond ->
 			conditions = conditions.add(cond)
 		}
 		return new Edge(from, that.to, conditions, that.assignment)
@@ -67,11 +65,11 @@ public class Edge {
 	@Override
 	public String toString() {
 		def assign = assignment == null ? "" : " + "+assignment.toString()
-		return conditions ? "--${conditions.collect { it.getSecond() }}$assign-->" : "-->"
+		return conditions ? "--${conditions.collect {it.condition}}$assign-->" : "-->"
 	}
 
 	public String getName(NodeNaming n) {
-		def names = conditions.collect { getEventName(n, it.getFirst(), it.getSecond()) }
+		def names = conditions.collect { getEventName(n, it.statement, it.condition) }
 		if (from instanceof IAssignment || from instanceof Skip) {
 			names << n.getName(from)
 		}
@@ -102,8 +100,8 @@ public class Edge {
 
 	public String rep() {
 		StringBuilder sb = new StringBuilder()
-		conditions.each { Tuple2<Statement, EventB>  t ->
-			sb.append(t.getFirst().toString())
+		conditions.each { ConditionalStatement  t ->
+			sb.append(t.statement.toString())
 			sb.append(" ")
 		}
 		if (assignment) {

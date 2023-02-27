@@ -13,8 +13,8 @@ class CFGIfTest extends Specification {
 		def g = createSubgraph(new Block().If("x > 1", {}))
 
 		then:
-		g.representation().first == ["if0", "filler"] as Set
-		g.representation().second == ["if0_then":"filler", "if0_else": "filler"]
+		g.representation().v1 == ["if0", "filler"] as Set
+		g.representation().v2 == ["if0_then":"filler", "if0_else": "filler"]
 	}
 
 	def "if then"() {
@@ -22,8 +22,8 @@ class CFGIfTest extends Specification {
 		def g = createSubgraph(new Block().If("x > 1", { Then("x := 1") }))
 
 		then:
-		g.representation().first == ["if0", "assign0", "filler"] as Set
-		g.representation().second == ["if0_then":"assign0", "assign0": "filler", "if0_else": "filler"]
+		g.representation().v1 == ["if0", "assign0", "filler"] as Set
+		g.representation().v2 == ["if0_then":"assign0", "assign0": "filler", "if0_else": "filler"]
 	}
 
 	def "if else"() {
@@ -31,8 +31,8 @@ class CFGIfTest extends Specification {
 		def g = createSubgraph(new Block().If("x > 1", { Else("x := 1") }))
 
 		then:
-		g.representation().first == ["if0", "assign0", "filler"] as Set
-		g.representation().second == ["if0_then":"filler", "assign0": "filler", "if0_else": "assign0"]
+		g.representation().v1 == ["if0", "assign0", "filler"] as Set
+		g.representation().v2 == ["if0_then":"filler", "assign0": "filler", "if0_else": "assign0"]
 	}
 
 	def "if then with following assignment"() {
@@ -40,8 +40,8 @@ class CFGIfTest extends Specification {
 		def g = createSubgraph(new Block().If("x > 1", { Then("x := 1") }).Assign("x := x + 1"))
 
 		then:
-		g.representation().first == ["if0", "assign0", "assign1"] as Set
-		g.representation().second == ["if0_then": "assign0", "if0_else": "assign1", "assign0": "assign1"]
+		g.representation().v1 == ["if0", "assign0", "assign1"] as Set
+		g.representation().v2 == ["if0_then": "assign0", "if0_else": "assign1", "assign0": "assign1"]
 	}
 
 	def "if else with following assignment"() {
@@ -49,8 +49,8 @@ class CFGIfTest extends Specification {
 		def g = createSubgraph(new Block().If("x > 1", { Else("x := 1") }).Assign("x := x + 1"))
 
 		then:
-		g.representation().first == ["if0", "assign0", "assign1"] as Set
-		g.representation().second == ["if0_then": "assign1", "if0_else": "assign0", "assign0": "assign1"]
+		g.representation().v1 == ["if0", "assign0", "assign1"] as Set
+		g.representation().v2 == ["if0_then": "assign1", "if0_else": "assign0", "assign0": "assign1"]
 	}
 
 	def "if then else with following assignment"() {
@@ -61,8 +61,8 @@ class CFGIfTest extends Specification {
 		}).Assign("x := x + 1"))
 
 		then:
-		g.representation().first == ["if0", "assign0", "assign1", "assign2"] as Set
-		g.representation().second == ["if0_then": "assign0", "if0_else": "assign1", "assign0": "assign2", "assign1": "assign2"]
+		g.representation().v1 == ["if0", "assign0", "assign1", "assign2"] as Set
+		g.representation().v2 == ["if0_then": "assign0", "if0_else": "assign1", "assign0": "assign2", "assign1": "assign2"]
 	}
 
 	def "nested ifs"() {
@@ -75,8 +75,8 @@ class CFGIfTest extends Specification {
 		}))
 
 		then:
-		g.representation().first == ["if0", "if1", "assign0", "assign1", "filler"] as Set
-		g.representation().second == [
+		g.representation().v1 == ["if0", "if1", "assign0", "assign1", "filler"] as Set
+		g.representation().v2 == [
 			if0_then: "if1",
 			if0_else: "assign1",
 			if1_then: "assign0",

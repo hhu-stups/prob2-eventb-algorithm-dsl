@@ -17,14 +17,14 @@ class CGFWhileTest extends Specification {
 		})
 
 		then:
-		graph.representation().getFirst() == [
+		graph.representation().v1 == [
 			"while0",
 			"while1",
 			"assign0",
 			"assign1",
 			"end_algorithm"
 		] as Set
-		graph.representation().getSecond() == [enter_while0: "assign0", assign0: "while0", exit_while0: "while1",
+		graph.representation().v2 == [enter_while0: "assign0", assign0: "while0", exit_while0: "while1",
 			enter_while1: "assign1", assign1: "while1", exit_while1: "end_algorithm"]
 	}
 
@@ -55,7 +55,7 @@ class CGFWhileTest extends Specification {
 		})
 
 		then:
-		g.representation().getFirst()  ==[
+		g.representation().v1 == [
 			"while0",
 			"while1",
 			"if0",
@@ -64,7 +64,7 @@ class CGFWhileTest extends Specification {
 			"assign2",
 			"end_algorithm"
 		] as Set
-		g.representation().getSecond() ==
+		g.representation().v2 ==
 				[enter_while0: "if0",if0_then:"while1",if0_else:"assign1",
 					enter_while1: "assign0", assign0: "while1", exit_while1: "assign1",
 					assign1:"while0","exit_while0": "assign2", "assign2": "end_algorithm"]
@@ -75,8 +75,8 @@ class CGFWhileTest extends Specification {
 		def g = createSubgraph(new Block().While("x < 10", { Assign("x := x + 1")}))
 
 		then:
-		g.representation().first == ["while0", "assign0", "filler"] as Set
-		g.representation().second == [enter_while0: "assign0", assign0: "while0", exit_while0: "filler"]
+		g.representation().v1 == ["while0", "assign0", "filler"] as Set
+		g.representation().v2 == [enter_while0: "assign0", assign0: "while0", exit_while0: "filler"]
 	}
 
 	def "while with an if"() {
@@ -91,8 +91,8 @@ class CGFWhileTest extends Specification {
 		}))
 
 		then:
-		g.representation().first == ["while0", "if0", "if1", "assign0", "assign1", "filler"] as Set
-		g.representation().second == [
+		g.representation().v1 == ["while0", "if0", "if1", "assign0", "assign1", "filler"] as Set
+		g.representation().v2 == [
 			enter_while0: "if0",
 			if0_then: "if1",
 			if0_else: "assign1",

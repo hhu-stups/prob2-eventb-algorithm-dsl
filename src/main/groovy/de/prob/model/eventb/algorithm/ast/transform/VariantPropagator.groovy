@@ -8,7 +8,6 @@ import de.prob.model.eventb.algorithm.Procedure
 import de.prob.model.eventb.algorithm.ast.*
 import de.prob.model.eventb.algorithm.graph.NodeNaming
 import de.prob.model.representation.ModelElementList
-import de.prob.util.Tuple2
 
 class VariantPropagator  {
 
@@ -145,7 +144,7 @@ class VariantPropagator  {
 		}
 	}
 
-	private recurAndCache(Statement s, List<Tuple2<List<EventB>,EventB>> assertions, List<Statement> rest) {
+	private recurAndCache(Statement s, List<VariantAssertion> assertions, List<Statement> rest) {
 		assertionMap[s] = assertions
 		if (rest.isEmpty()) {
 			return rest
@@ -154,7 +153,7 @@ class VariantPropagator  {
 		}
 	}
 
-	private List<Statement> normalRecur(Statement s, List<Tuple2<List<EventB>,EventB>> assertions, List<Statement> rest) {
+	private List<Statement> normalRecur(Statement s, List<VariantAssertion> assertions, List<Statement> rest) {
 		if (rest.isEmpty()) {
 			return rest
 		} else {

@@ -22,7 +22,7 @@ class CGFReturnTest extends Specification {
 
 		then:
 		graph.size() == 7
-		graph.representation().getFirst() == [
+		graph.representation().v1 == [
 			"if0",
 			"return0",
 			"if1",
@@ -31,7 +31,7 @@ class CGFReturnTest extends Specification {
 			"return2",
 			"end_algorithm"
 		] as Set
-		graph.representation().getSecond() == [if0_then: "return0", return0: "end_algorithm",
+		graph.representation().v2 == [if0_then: "return0", return0: "end_algorithm",
 			if0_else: "if1", if1_then: "return1", return1: "end_algorithm", if1_else: "assign0",
 			assign0: "return2", return2: "end_algorithm"]
 	}

@@ -163,7 +163,7 @@ class AlgorithmTranslator {
 			EventModifier em = new EventModifier(new Event(eventName, EventType.ORDINARY, Event.Inheritance.NONE))
 					.addComment(e.rep())
 					.guard("$pcname = ${pcs[stmt]}")
-			e.conditions.each { em = em.guard(it.getSecond()) }
+			e.conditions.each { em = em.guard(it.condition) }
 			if (e.assignment) {
 				em = addAssignment(em, e.assignment, procedure)
 			}

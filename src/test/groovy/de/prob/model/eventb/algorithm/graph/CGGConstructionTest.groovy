@@ -27,7 +27,7 @@ class CGGConstructionTest extends Specification {
 		Edge e = g.edges.find {
 			it.from == n.getNode(from) && it.to == n.getNode(to)
 		}
-		e ? e.conditions.collect { it.getSecond().getCode() } : null
+		e ? e.conditions.collect { it.condition.getCode() } : null
 	}
 
 	def edges(ControlFlowGraph g, String from, String to) {
@@ -38,7 +38,7 @@ class CGGConstructionTest extends Specification {
 			it.from == n.getNode(from) && it.to == n.getNode(to)
 		}.collect {
 			it.conditions.collect {
-				it.getSecond().getCode()
+				it.condition.getCode()
 			}
 		} as Set
 	}

@@ -29,7 +29,7 @@ class MergedAssignmentCGGConstructionTest extends Specification {
 			it.from == n.getNode(from) && it.to == n.getNode(to)
 		}
 		if (e) {
-			def eRep = e.conditions.collect { it.getSecond().getCode() }
+			def eRep = e.conditions.collect { it.condition.getCode() }
 			if (e.assignment instanceof Assignment) {
 				return eRep + [
 					e.assignment.assignment.getCode()
@@ -52,7 +52,7 @@ class MergedAssignmentCGGConstructionTest extends Specification {
 			]
 			: []
 			it.conditions.collect {
-				it.getSecond().getCode()
+				it.condition.getCode()
 			} + assignment
 		} as Set
 	}
