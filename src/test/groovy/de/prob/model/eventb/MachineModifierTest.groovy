@@ -241,7 +241,7 @@ class MachineModifierTest extends Specification {
 	}
 
 	def po(String name) {
-		new ProofObligation(null, name, false, "", [])
+		new ProofObligation(null, name, 0, "", [])
 	}
 
 	def "adding an invariant deletes all INV proof obligations from model"() {

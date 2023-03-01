@@ -15,7 +15,7 @@ class MachineModifierTest2 extends Specification {
 	}
 
 	def po(String name) {
-		new ProofObligation(null, name, false, "", [])
+		new ProofObligation(null, name, 0, "", [])
 	}
 
 	def "invariants cannot be null"() {
