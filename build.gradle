@@ -9,10 +9,6 @@ group = "de.hhu.stups"
 version = "3.2.12-SNAPSHOT"
 final isSnapshot = project.version.endsWith("-SNAPSHOT")
 
-wrapper {
-	gradleVersion = "7.6"
-}
-
 repositories {
 	mavenCentral()
 	if (isSnapshot) {
