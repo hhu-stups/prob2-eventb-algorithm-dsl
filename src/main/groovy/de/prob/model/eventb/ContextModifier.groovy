@@ -90,7 +90,7 @@ public class ContextModifier extends AbstractModifier {
 
 	def ContextModifier axioms(Map<?, ?> axioms) throws ModelGenerationException {
 		ContextModifier cm = this
-		axioms.each { k,v ->
+		validate("axioms", axioms).each { k,v ->
 			cm = cm.axiom(k,v)
 		}
 		cm

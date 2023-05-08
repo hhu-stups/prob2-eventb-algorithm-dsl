@@ -20,6 +20,9 @@ class Definition {
 	 * @throws IllegalArgumentException
 	 */
 	def Definition(Map<String, String> map) {
+		if (map == null) {
+			throw new IllegalArgumentException("Definitions map must not be null")
+		}
 		if (map.size() != 1) {
 			throw new IllegalArgumentException("Definitions must define only one property")
 		}

@@ -229,6 +229,7 @@ public class MachineModifier extends AbstractModifier {
 	}
 
 	def MachineModifier initialisation(Map<String, ?> properties, Closure<?> cls={}) throws ModelGenerationException {
+		validate("properties", properties)
 		if (properties["extended"] == true) {
 			return initialisation(cls,true)
 		}

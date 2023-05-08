@@ -69,7 +69,7 @@ public class EventModifier extends AbstractModifier {
 
 	def EventModifier guards(Map<?, ?> guards) throws ModelGenerationException {
 		EventModifier em = this
-		guards.each { k,v ->
+		validate('guards', guards).each { k,v ->
 			em = em.guard(k,v)
 		}
 		em
@@ -141,7 +141,7 @@ public class EventModifier extends AbstractModifier {
 
 	def EventModifier actions(Map<String, ?> actions) throws ModelGenerationException {
 		EventModifier em = this
-		actions.each { k,v ->
+		validate('actions', actions).each { k,v ->
 			em = em.action(k,v)
 		}
 		em
