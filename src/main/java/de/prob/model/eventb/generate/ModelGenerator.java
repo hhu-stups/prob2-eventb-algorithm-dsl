@@ -17,23 +17,17 @@ import com.google.gson.reflect.TypeToken;
 import de.be4.eventbalg.core.parser.BException;
 import de.be4.eventbalg.core.parser.EventBParser;
 import de.be4.eventbalg.core.parser.node.Start;
-
-import de.prob.Main;
 import de.prob.model.eventb.EventBModel;
 import de.prob.model.eventb.ModelModifier;
-import de.prob.scripting.StateSpaceProvider;
 
 public class ModelGenerator {
 
 	private ModelModifier modelM;
 
-	public ModelGenerator(final String path, final String projectName)
-			throws IOException, BException {
-		EventBModel model = new EventBModel(Main.getInjector().getInstance(
-				StateSpaceProvider.class));
+	public ModelGenerator(ModelModifier modelM, final String path) throws IOException, BException {
 		File file = new File(path);
 		checkFile(file, true);
-		ModelModifier modelM = extractTheories(model, path);
+		modelM = extractTheories(modelM, path);
 
 		File[] files = file.listFiles((dir, name) -> {
 			String lowercaseName = name.toLowerCase();
@@ -52,13 +46,22 @@ public class ModelGenerator {
 		this.modelM = addComponents(modelM, components);
 	}
 
-	@SuppressWarnings("unchecked")
-	private ModelModifier extractTheories(final EventBModel model, final String path) throws IOException {
+	/**
+	 * @param projectName unused
+	 * @deprecated This constructor relies on the ProB Java API's deprecated global injector.
+	 *     The {@code projectName} parameter is also unused.
+	 *     Use {@link #ModelGenerator(ModelModifier, String)} instead.
+	 */
+	@Deprecated
+	public ModelGenerator(final String path, final String projectName) throws IOException, BException {
+		this(new ModelModifier(), path);
+	}
+
+	private ModelModifier extractTheories(ModelModifier mm, final String path) throws IOException {
 		File theoryPath = new File(path + File.separator + "TheoryPath.json");
 		if (!theoryPath.exists()) {
-			return new ModelModifier(model);
+			return mm;
 		}
-		ModelModifier mm = new ModelModifier(model);
 		String file = readFile(theoryPath);
 		Gson gson = new Gson();
 		Type type = new TypeToken<Map<String, List<String>>>() {}.getType();

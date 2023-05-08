@@ -34,6 +34,11 @@ public class ModelModifier extends AbstractModifier {
 		this.model = model
 	}
 
+	/**
+	 * @deprecated This constructor relies on the ProB Java API's deprecated global injector.
+	 *     Call {@link #ModelModifier(EventBModel)} instead and use injection to get a blank {@link EventBModel}.
+	 */
+	@Deprecated
 	def ModelModifier() {
 		this(Main.getInjector().getInstance(EventBFactory.class).modelCreator.get())
 	}

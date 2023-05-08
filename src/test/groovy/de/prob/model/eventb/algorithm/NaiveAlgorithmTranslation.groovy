@@ -5,7 +5,7 @@ import de.prob.model.eventb.EventBInvariant
 import de.prob.model.eventb.EventBMachine
 import de.prob.model.eventb.MachineModifier
 import de.prob.model.eventb.ModelModifier
-
+import de.prob.model.eventb.ModelModifierTest
 import spock.lang.Specification
 
 class NaiveAlgorithmTranslation extends Specification {
@@ -17,7 +17,7 @@ class NaiveAlgorithmTranslation extends Specification {
 	}
 
 	def translate(MachineModifier mm) {
-		ModelModifier modelM = new ModelModifier().addMachine(mm.getMachine())
+		ModelModifier modelM = ModelModifierTest.makeModelModifier().addMachine(mm.getMachine())
 		String name = mm.getMachine().getName()
 		modelM = new AlgorithmTranslator(modelM.getModel(), new AlgorithmGenerationOptions()).runTranslation(modelM, name)
 		modelM.getModel().getMachine(name)

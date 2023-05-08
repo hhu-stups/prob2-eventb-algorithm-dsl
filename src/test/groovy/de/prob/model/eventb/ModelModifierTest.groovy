@@ -1,15 +1,24 @@
 package de.prob.model.eventb
 
+import com.google.inject.Guice
+import com.google.inject.Injector
+import de.prob.MainModule
 import de.prob.model.representation.DependencyGraph.ERefType
-import de.prob.model.representation.ElementComment
-
 import spock.lang.Specification
 
 class ModelModifierTest extends Specification {
+	private static Injector injector = null
+
+	static ModelModifier makeModelModifier() {
+		if (injector == null) {
+			injector = Guice.createInjector(new MainModule())
+		}
+		new ModelModifier(injector.getInstance(EventBModel))
+	}
 
 	def "adding a machine with no refinement should not overwrite existing refinement"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "m1") {}
 
 			machine(name: "m2", refines: "m1") {}
@@ -27,7 +36,7 @@ class ModelModifierTest extends Specification {
 
 	def "adding a machine with a refinement should replace existing refinement (and delete existing relationship)"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "m1") {}
 			machine(name: "m2", refines: "m1") {}
 		}
@@ -48,7 +57,7 @@ class ModelModifierTest extends Specification {
 
 	def "adding a machine with no sees should not overwrite existing sees"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "c1") {}
 
 			machine(name: "m1", sees: ["c1"]) {}
@@ -66,7 +75,7 @@ class ModelModifierTest extends Specification {
 
 	def "adding a machine with sees should add sees to existing sees if they are new"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "c1") {}
 
 			machine(name: "m1", sees: ["c1"]) {}
@@ -97,7 +106,7 @@ class ModelModifierTest extends Specification {
 
 	def "adding a context with no extends should not overwrite existing extends"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "c1") {}
 
 			context(name: "c2", extends: "c1") {}
@@ -115,7 +124,7 @@ class ModelModifierTest extends Specification {
 
 	def "it is possible to easily refine a machine"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "Lift") {
 				var "level", "level : 0..5", "level := 0"
 				event(name: "up") {
@@ -143,7 +152,7 @@ class ModelModifierTest extends Specification {
 	def "adding a machine with a comment works"() {
 		when:
 		def mycomment = "This is a comment!"
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "Lift", comment: mycomment) {
 			}
 		}
@@ -154,7 +163,7 @@ class ModelModifierTest extends Specification {
 
 	def "if refining a machine, it must already be there"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "Lift", refines: "IDonTExist") {
 			}
 		}
@@ -165,7 +174,7 @@ class ModelModifierTest extends Specification {
 
 	def "when a machine sees a context, it must be there"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "Lift", sees: ["IDonTExist"]) {
 			}
 		}
@@ -176,7 +185,7 @@ class ModelModifierTest extends Specification {
 
 	def "when refining a machine it must be there"() {
 		when:
-		def mm = new ModelModifier().make { refine("Lift", "Lift2")  }
+		def mm = makeModelModifier().make { refine("Lift", "Lift2")  }
 
 		then:
 		thrown(IllegalArgumentException)
@@ -186,7 +195,7 @@ class ModelModifierTest extends Specification {
 	def "adding a context with a comment works"() {
 		when:
 		def mycomment = "This is a comment!"
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "ctx", comment: mycomment) {
 			}
 		}
@@ -197,7 +206,7 @@ class ModelModifierTest extends Specification {
 
 	def "when extending a context, it must be there already"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "ctx", extends: "IDonTExist") {
 			}
 		}
@@ -208,7 +217,7 @@ class ModelModifierTest extends Specification {
 
 	def "if the extended context is changed, this relationship is removed from the model"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "IDoNothing") {}
 			context(name: "IAlsoDoNothing", extends: "IDoNothing") {}
 		}
@@ -244,7 +253,7 @@ class ModelModifierTest extends Specification {
 
 	def "replacing contexts works"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "A") {}
 			context(name: "B", extends: "A") {}
 			context(name: "C", extends: "B") {}
@@ -269,7 +278,7 @@ class ModelModifierTest extends Specification {
 
 	def "replacing machine works"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			machine(name: "A") {}
 			machine(name: "B", refines: "A") {}
 			machine(name: "C", refines: "B") {}
@@ -289,7 +298,7 @@ class ModelModifierTest extends Specification {
 
 	def "deleting machine works"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "ctx0") {}
 			context(name: "ctx1", "extends": "ctx0") {}
 			machine(name: "mch0", sees: ["ctx0"]) {}
@@ -325,7 +334,7 @@ class ModelModifierTest extends Specification {
 
 	def "deleting context works"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "ctx0") {}
 			context(name: "ctx1", "extends": "ctx0") {}
 			machine(name: "mch0", sees: ["ctx0"]) {}
@@ -362,7 +371,7 @@ class ModelModifierTest extends Specification {
 
 	def "replacing machine (2) works"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "ctx0") {}
 			context(name: "ctx1", "extends": "ctx0") {}
 			machine(name: "mch0", sees: ["ctx0"]) {}
@@ -399,7 +408,7 @@ class ModelModifierTest extends Specification {
 
 	def "replacing context (2) works"() {
 		when:
-		def mm = new ModelModifier().make {
+		def mm = makeModelModifier().make {
 			context(name: "ctx0") {}
 			context(name: "ctx1", "extends": "ctx0") {}
 			machine(name: "mch0", sees: ["ctx0"]) {}
@@ -438,7 +447,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories map cannot be empty"() {
 		when:
-		mm = new ModelModifier().loadTheories([:])
+		mm = makeModelModifier().loadTheories([:])
 
 		then:
 		thrown IllegalArgumentException
@@ -446,7 +455,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories requires workspace"() {
 		when:
-		def mm = new ModelModifier().loadTheories([project: "MyProject", theories: []])
+		def mm = makeModelModifier().loadTheories([project: "MyProject", theories: []])
 
 		then:
 		thrown IllegalArgumentException
@@ -454,7 +463,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories requires project"() {
 		when:
-		def mm = new ModelModifier().loadTheories([workspace: "MyWkspc", theories: []])
+		def mm = makeModelModifier().loadTheories([workspace: "MyWkspc", theories: []])
 
 		then:
 		thrown IllegalArgumentException
@@ -462,7 +471,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories requires theories"() {
 		when:
-		def mm = new ModelModifier().loadTheories([workspace: "MyWkspc", project: "MyProject"])
+		def mm = makeModelModifier().loadTheories([workspace: "MyWkspc", project: "MyProject"])
 
 		then:
 		thrown IllegalArgumentException
@@ -470,7 +479,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories theories cannot be null"() {
 		when:
-		def mm = new ModelModifier().loadTheories([workspace: "MyWkspc", project: "MyProject", theories: null])
+		def mm = makeModelModifier().loadTheories([workspace: "MyWkspc", project: "MyProject", theories: null])
 
 		then:
 		thrown IllegalArgumentException
@@ -478,7 +487,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories workspace cannot be null"() {
 		when:
-		def mm = new ModelModifier().loadTheories([workspace: null, project: "MyProject", theories: ["Atheory"]])
+		def mm = makeModelModifier().loadTheories([workspace: null, project: "MyProject", theories: ["Atheory"]])
 
 		then:
 		thrown IllegalArgumentException
@@ -486,7 +495,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories project cannot be null"() {
 		when:
-		def mm = new ModelModifier().loadTheories([workspace: "MyWkspc", project: null, theories: ["Atheory"]])
+		def mm = makeModelModifier().loadTheories([workspace: "MyWkspc", project: null, theories: ["Atheory"]])
 
 		then:
 		thrown IllegalArgumentException
@@ -494,7 +503,7 @@ class ModelModifierTest extends Specification {
 
 	def "load theories single theories cannot be null"() {
 		when:
-		def mm = new ModelModifier().loadTheories([workspace: "MyWkspc", project: "MyProject", theories: [null]])
+		def mm = makeModelModifier().loadTheories([workspace: "MyWkspc", project: "MyProject", theories: [null]])
 
 		then:
 		thrown IllegalArgumentException
