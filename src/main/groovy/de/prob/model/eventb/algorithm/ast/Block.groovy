@@ -19,7 +19,7 @@ class Block extends AbstractModifier {
 		return new Block(statements, typeEnvironment)
 	}
 
-	def Block If(String condition, Closure definition) throws ModelGenerationException {
+	def Block If(String condition, Closure<?> definition) throws ModelGenerationException {
 		newBlock(statements.addElement(new If(condition, typeEnvironment).make(definition)))
 	}
 
@@ -27,11 +27,11 @@ class Block extends AbstractModifier {
 		newBlock(statements.addElement(new If(condition, typeEnvironment).Then(thenBlock).Else(elseBlock)))
 	}
 
-	def Block While(String condition, Closure definition) throws ModelGenerationException {
+	def Block While(String condition, Closure<?> definition) throws ModelGenerationException {
 		newBlock(statements.addElement(new While(condition, null, null, newBlock().make(definition), typeEnvironment)))
 	}
 
-	def Block While(LinkedHashMap properties, String condition, Closure definition) throws ModelGenerationException {
+	def Block While(Map<String, ?> properties, String condition, Closure<?> definition) throws ModelGenerationException {
 		def props = validateProperties(properties, [variant: [String, null], invariant: [String, null]])
 		newBlock(statements.addElement(new While(condition, props.variant, props.invariant, newBlock().make(definition), typeEnvironment)))
 	}
@@ -83,7 +83,7 @@ class Block extends AbstractModifier {
 		finish()
 	}
 
-	def Block make(Closure definition) throws ModelGenerationException {
+	def Block make(Closure<?> definition) throws ModelGenerationException {
 		runClosure definition
 	}
 }

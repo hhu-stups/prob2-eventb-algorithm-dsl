@@ -77,7 +77,7 @@ public class MachineModifier extends AbstractModifier {
 		newMM(machine.withVariables(machine.variables.addElement(variable)))
 	}
 
-	def MachineModifier var(LinkedHashMap properties) throws ModelGenerationException {
+	def MachineModifier var(Map<String, ?> properties) throws ModelGenerationException {
 		Map validated = validateProperties(validate("properties", properties), [name: String, invariant: Object, init: Object])
 		var(validated.name, validated.invariant, validated.init)
 	}
@@ -89,7 +89,7 @@ public class MachineModifier extends AbstractModifier {
 		mm
 	}
 
-	def MachineModifier var(String name, Map inv, Map init) throws ModelGenerationException {
+	def MachineModifier var(String name, Map<String, String> inv, Map<String, String> init) throws ModelGenerationException {
 		MachineModifier mm = variable(name)
 		mm = mm.invariant(inv)
 		mm = mm.initialisation({ action init })
@@ -105,7 +105,7 @@ public class MachineModifier extends AbstractModifier {
 		newMM(machine.withVariables(machine.variables.removeElement(variable)))
 	}
 
-	def MachineModifier invariants(Map invariants) throws ModelGenerationException {
+	def MachineModifier invariants(Map<?, ?> invariants) throws ModelGenerationException {
 		MachineModifier mm = this
 		validate("invariants", invariants).each { k,v ->
 			mm = mm.invariant(k,v)
@@ -121,7 +121,7 @@ public class MachineModifier extends AbstractModifier {
 		mm
 	}
 
-	def MachineModifier theorems(Map invariants) throws ModelGenerationException {
+	def MachineModifier theorems(Map<String, String> invariants) throws ModelGenerationException {
 		MachineModifier mm = this
 		invariants.each { k,v ->
 			mm = mm.theorem(k,v)
@@ -137,7 +137,7 @@ public class MachineModifier extends AbstractModifier {
 		mm
 	}
 
-	def MachineModifier theorem(LinkedHashMap properties) throws ModelGenerationException {
+	def MachineModifier theorem(Map<String, String> properties) throws ModelGenerationException {
 		invariant(properties, true)
 	}
 
@@ -149,7 +149,7 @@ public class MachineModifier extends AbstractModifier {
 		invariant(validate("name", name), validate("pred", pred), true)
 	}
 
-	def MachineModifier invariant(LinkedHashMap properties, boolean theorem=false) throws ModelGenerationException {
+	def MachineModifier invariant(Map<String, String> properties, boolean theorem=false) throws ModelGenerationException {
 		Definition prop = getDefinition(properties)
 		return invariant(prop.label, prop.formula, theorem)
 	}
@@ -228,25 +228,25 @@ public class MachineModifier extends AbstractModifier {
 		newMM(mm.machine.withVariant(null))
 	}
 
-	def MachineModifier initialisation(LinkedHashMap properties, Closure cls={}) throws ModelGenerationException {
+	def MachineModifier initialisation(Map<String, ?> properties, Closure<?> cls={}) throws ModelGenerationException {
 		if (properties["extended"] == true) {
 			return initialisation(cls,true)
 		}
 		this
 	}
 
-	def MachineModifier initialisation(Closure cls, boolean extended=false) throws ModelGenerationException {
+	def MachineModifier initialisation(Closure<?> cls, boolean extended=false) throws ModelGenerationException {
 		def refines = machine.refinesMachine == null ? null : "INITIALISATION"
 		event("INITIALISATION", refines, EventType.ORDINARY, extended, null, validate("cls",cls))
 	}
 
-	def MachineModifier refine(LinkedHashMap properties, Closure cls={}) throws ModelGenerationException {
+	def MachineModifier refine(Map<String, ?> properties, Closure<?> cls={}) throws ModelGenerationException {
 		validate("properties", properties)
 		properties["refines"] = properties["name"]
 		event(properties, validate("cls", cls))
 	}
 
-	def MachineModifier event(LinkedHashMap properties, Closure cls={}) throws ModelGenerationException {
+	def MachineModifier event(Map<String, ?> properties, Closure<?> cls={}) throws ModelGenerationException {
 		def props = validateProperties(properties, [name: String, refines: [String, null],
 			extended: [Boolean, false], comment: [String, null], type: [
 				EventType,
@@ -256,7 +256,7 @@ public class MachineModifier extends AbstractModifier {
 		event(props["name"], props["refines"], props["type"],props["extended"],props["comment"], validate("cls",cls))
 	}
 
-	def MachineModifier event(String name, String refinedEvent, EventType type, boolean extended, String comment=null,Closure cls={} ) throws ModelGenerationException {
+	def MachineModifier event(String name, String refinedEvent, EventType type, boolean extended, String comment=null, Closure<?> cls={}) throws ModelGenerationException {
 		validateAll(name, type, cls)
 		if (refinedEvent && machine.refinesMachine == null) {
 			throw new IllegalArgumentException("Machine refinement hierarchy is incorrect. Could not find Event $refinedEvent to refine")
@@ -336,7 +336,7 @@ public class MachineModifier extends AbstractModifier {
 		newMM(machine.withComment(existingComment == null ? comment : existingComment + "\n" + comment))
 	}
 
-	def MachineModifier algorithm(Closure definition) throws ModelGenerationException {
+	def MachineModifier algorithm(Closure<?> definition) throws ModelGenerationException {
 		newMM(machine.addTo(Block.class, new Block([],typeEnvironment).make(definition)))
 	}
 
@@ -344,7 +344,7 @@ public class MachineModifier extends AbstractModifier {
 		newMM(machine.addTo(Block.class, algorithm))
 	}
 
-	def MachineModifier make(Closure definition) throws ModelGenerationException {
+	def MachineModifier make(Closure<?> definition) throws ModelGenerationException {
 		runClosure definition
 	}
 

@@ -42,7 +42,7 @@ public class ModelModifier extends AbstractModifier {
 		new ModelModifier(model.calculateDependencies(), typeEnvironment)
 	}
 
-	def ModelModifier context(HashMap properties, Closure definition) throws ModelGenerationException {
+	def ModelModifier context(Map<String, ?> properties, Closure<?> definition) throws ModelGenerationException {
 		def props = validateProperties(properties, [name: String, "extends": [String, null], comment: [String, null]])
 		def model = this.model
 		def name = properties["name"]
@@ -62,7 +62,7 @@ public class ModelModifier extends AbstractModifier {
 		addContext(cm.getContext())
 	}
 
-	def ModelModifier machine(HashMap properties, Closure definition) throws ModelGenerationException {
+	def ModelModifier machine(Map<String, ?> properties, Closure<?> definition) throws ModelGenerationException {
 		def props = validateProperties(properties, [name: String, refines: [String, null], sees: [List, []], comment: [String, null]])
 		def model = this.model
 		def name = props["name"]
@@ -183,7 +183,7 @@ public class ModelModifier extends AbstractModifier {
 		newMM(m)
 	}
 
-	def ModelModifier procedure(LinkedHashMap properties, Closure definition) {
+	def ModelModifier procedure(Map<String, ?> properties, Closure<?> definition) {
 		def props = validateProperties(properties, [name: String, seen: [String, null]])
 		Context ctx = props["seen"] ? model.getContext(props["seen"]) : null
 		Procedure proc = new Procedure(properties["name"], ctx, typeEnvironment).make(definition)
@@ -195,7 +195,7 @@ public class ModelModifier extends AbstractModifier {
 		newMM(mm.getModel().addTo(Procedure.class, procedure))
 	}
 
-	def ModelModifier loadTheories(LinkedHashMap properties) {
+	def ModelModifier loadTheories(Map<String, ?> properties) {
 		validateProperties(properties, [workspace: String, project: String, theories: String[]])
 		SAXParserFactory parserFactory = SAXParserFactory.newInstance();
 		SAXParser saxParser = parserFactory.newSAXParser();
@@ -217,7 +217,7 @@ public class ModelModifier extends AbstractModifier {
 		new ModelModifier(model, types)
 	}
 
-	def ModelModifier make(Closure definition) throws ModelGenerationException {
+	def ModelModifier make(Closure<?> definition) throws ModelGenerationException {
 		runClosure definition
 	}
 }

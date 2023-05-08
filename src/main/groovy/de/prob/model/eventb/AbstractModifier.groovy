@@ -1,12 +1,11 @@
 package de.prob.model.eventb
 
-import de.be4.classicalb.core.parser.node.*
-
+import de.be4.classicalb.core.parser.node.AIdentifierExpression
 import de.prob.animator.domainobjects.EvalElementType
 import de.prob.animator.domainobjects.EvaluationException
 import de.prob.animator.domainobjects.EventB
 import de.prob.model.representation.AbstractElement
-
+import de.prob.model.representation.Named
 import org.eventb.core.ast.extension.IFormulaExtension
 
 class AbstractModifier extends AbstractElement {
@@ -17,23 +16,23 @@ class AbstractModifier extends AbstractElement {
 		this.typeEnvironment = typeEnvironment ?: Collections.emptySet()
 	}
 
-	protected Map validateProperties(Map properties, Map required) {
+	protected Map<String, ?> validateProperties(Map<String, ?> properties, Map<String, ?> required) {
 		validate("properties", properties)
 		required.collectEntries { String prop,type ->
-			if (type instanceof List && type.size() == 2) {
+			if (type instanceof List<?> && type.size() == 2) {
 				return validateOptionalProperty(properties, prop, type)
 			}
 			if (type instanceof EvalElementType) {
 				return validateFormula(properties, prop, type)
 			}
-			if (type instanceof Class) {
+			if (type instanceof Class<?>) {
 				return validateRequiredProperty(properties, prop, type)
 			}
 			throw new IllegalArgumentException("incorrect properties: values must be either a class or a tuple with two elements")
 		}
 	}
 
-	protected validateOptionalProperty(LinkedHashMap properties, String property, List type) {
+	protected List<?> validateOptionalProperty(Map<String, ?> properties, String property, List<?> type) {
 		if (type.size() != 2) {
 			throw new IllegalArgumentException("type tuple must contain two elements")
 		}
@@ -47,7 +46,7 @@ class AbstractModifier extends AbstractElement {
 		}
 	}
 
-	protected validateFormula(LinkedHashMap properties, String property, EvalElementType formulaType) {
+	protected List<?> validateFormula(Map<String, ?> properties, String property, EvalElementType formulaType) {
 		if (properties[property]) {
 			return [
 				property,
@@ -58,7 +57,7 @@ class AbstractModifier extends AbstractElement {
 		}
 	}
 
-	protected validateRequiredProperty(LinkedHashMap properties, String property, Class type) {
+	protected List<?> validateRequiredProperty(Map<String, ?> properties, String property, Class<?> type) {
 		if (properties[property]) {
 			return [
 				property,
@@ -69,11 +68,11 @@ class AbstractModifier extends AbstractElement {
 		}
 	}
 
-	protected Definition getDefinition(Map definition) {
+	protected Definition getDefinition(Map<String, String> definition) {
 		new Definition(definition)
 	}
 
-	def String getUniqueName(String name, List elements) {
+	def String getUniqueName(String name, List<? extends Named> elements) {
 		def element = elements.find { it.getName() == name }
 		if (!element) {
 			return name
@@ -157,11 +156,11 @@ class AbstractModifier extends AbstractElement {
 		return e
 	}
 
-	protected AbstractModifier runClosure(Closure runClosure) {
+	protected AbstractModifier runClosure(Closure<?> runClosure) {
 		validate('runClosure', runClosure)
 
 		// Create clone of closure for threading access.
-		Closure runClone = runClosure.clone()
+		Closure<?> runClone = runClosure.clone()
 
 		def delegateH = new DelegateHelper(this)
 		// Set delegate of closure to this builder.

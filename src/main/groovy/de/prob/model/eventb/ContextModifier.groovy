@@ -22,7 +22,7 @@ public class ContextModifier extends AbstractModifier {
 		newCM(context.withExtends(new ModelElementList<>([extended])))
 	}
 
-	def ContextModifier enumerated_set(LinkedHashMap properties) throws ModelGenerationException {
+	def ContextModifier enumerated_set(Map<String, ?> properties) throws ModelGenerationException {
 		Map validated = validateProperties(properties, [name: String, constants: String[]])
 		addEnumeratedSet(validated["name"], validated["constants"])
 	}
@@ -88,7 +88,7 @@ public class ContextModifier extends AbstractModifier {
 		return newCM(ctx)
 	}
 
-	def ContextModifier axioms(LinkedHashMap axioms) throws ModelGenerationException {
+	def ContextModifier axioms(Map<?, ?> axioms) throws ModelGenerationException {
 		ContextModifier cm = this
 		axioms.each { k,v ->
 			cm = cm.axiom(k,v)
@@ -104,7 +104,7 @@ public class ContextModifier extends AbstractModifier {
 		cm
 	}
 
-	def ContextModifier theorem(LinkedHashMap theorem) throws ModelGenerationException {
+	def ContextModifier theorem(Map<String, String> theorem) throws ModelGenerationException {
 		axiom(theorem, true)
 	}
 
@@ -112,7 +112,7 @@ public class ContextModifier extends AbstractModifier {
 		axiom(validate("theorem", theorem), true)
 	}
 
-	def ContextModifier axiom(Map props, boolean theorem=false) throws ModelGenerationException {
+	def ContextModifier axiom(Map<String, String> props, boolean theorem=false) throws ModelGenerationException {
 		Definition prop = getDefinition(props)
 		return axiom(prop.label, prop.formula, theorem)
 	}
@@ -151,7 +151,7 @@ public class ContextModifier extends AbstractModifier {
 		newCM(context.withComment(existingComment == null ? comment : existingComment + "\n" + comment))
 	}
 
-	def ContextModifier make(Closure definition) throws ModelGenerationException {
+	def ContextModifier make(Closure<?> definition) throws ModelGenerationException {
 		runClosure definition
 	}
 }

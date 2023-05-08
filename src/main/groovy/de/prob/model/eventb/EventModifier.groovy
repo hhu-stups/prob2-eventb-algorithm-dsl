@@ -51,7 +51,7 @@ public class EventModifier extends AbstractModifier {
 		newEM(e)
 	}
 
-	def EventModifier when(LinkedHashMap g) throws ModelGenerationException {
+	def EventModifier when(Map<?, ?> g) throws ModelGenerationException {
 		guards(g)
 	}
 
@@ -59,7 +59,7 @@ public class EventModifier extends AbstractModifier {
 		guards(validate('conditions',conditions))
 	}
 
-	def EventModifier where(LinkedHashMap g) throws ModelGenerationException {
+	def EventModifier where(Map<?, ?> g) throws ModelGenerationException {
 		guards(g)
 	}
 
@@ -67,7 +67,7 @@ public class EventModifier extends AbstractModifier {
 		guards(validate('conditions',conditions))
 	}
 
-	def EventModifier guards(LinkedHashMap guards) throws ModelGenerationException {
+	def EventModifier guards(Map<?, ?> guards) throws ModelGenerationException {
 		EventModifier em = this
 		guards.each { k,v ->
 			em = em.guard(k,v)
@@ -83,7 +83,7 @@ public class EventModifier extends AbstractModifier {
 		em
 	}
 
-	def EventModifier theorem(LinkedHashMap theorem) throws ModelGenerationException {
+	def EventModifier theorem(Map<String, String> theorem) throws ModelGenerationException {
 		guard(theorem, true)
 	}
 
@@ -99,7 +99,7 @@ public class EventModifier extends AbstractModifier {
 		guard(theorem ? "thm0" : "grd0", predicate, theorem)
 	}
 
-	def EventModifier guard(LinkedHashMap properties, boolean theorem=false) throws ModelGenerationException {
+	def EventModifier guard(Map<String, String> properties, boolean theorem=false) throws ModelGenerationException {
 		Definition prop = getDefinition(properties)
 		return guard(prop.label, prop.formula, theorem)
 	}
@@ -131,7 +131,7 @@ public class EventModifier extends AbstractModifier {
 		newEM(event.withGuards(event.guards.removeElement(guard)))
 	}
 
-	def EventModifier then(LinkedHashMap assignments) throws ModelGenerationException {
+	def EventModifier then(Map<String, ?> assignments) throws ModelGenerationException {
 		actions(assignments)
 	}
 
@@ -139,7 +139,7 @@ public class EventModifier extends AbstractModifier {
 		actions(validate('assignments',assignments))
 	}
 
-	def EventModifier actions(LinkedHashMap actions) throws ModelGenerationException {
+	def EventModifier actions(Map<String, ?> actions) throws ModelGenerationException {
 		EventModifier em = this
 		actions.each { k,v ->
 			em = em.action(k,v)
@@ -155,7 +155,7 @@ public class EventModifier extends AbstractModifier {
 		em
 	}
 
-	def EventModifier action(LinkedHashMap properties) throws ModelGenerationException {
+	def EventModifier action(Map<String, String> properties) throws ModelGenerationException {
 		Definition prop = getDefinition(properties)
 		return action(prop.label, prop.formula)
 	}
@@ -230,7 +230,7 @@ public class EventModifier extends AbstractModifier {
 		witness(validate('name',name), validate('predicate',predicate))
 	}
 
-	def EventModifier witness(LinkedHashMap properties, String comment="") throws ModelGenerationException {
+	def EventModifier witness(Map<String, ?> properties, String comment="") throws ModelGenerationException {
 		Map validated = validateProperties(properties, [for: String, with: String])
 		witness(validated.for, validated.with,comment)
 	}
@@ -263,7 +263,7 @@ public class EventModifier extends AbstractModifier {
 		newEM(event.withComment(existingComment == null ? comment : existingComment + "\n" + comment))
 	}
 
-	def EventModifier make(Closure definition) throws ModelGenerationException {
+	def EventModifier make(Closure<?> definition) throws ModelGenerationException {
 		runClosure definition
 	}
 }

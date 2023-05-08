@@ -63,7 +63,7 @@ class Procedure extends AbstractModifier implements Named {
 		this.postcondition = postcondition
 	}
 
-	def Procedure argument(LinkedHashMap definition) throws ModelGenerationException {
+	def Procedure argument(Map<String, ?> definition) throws ModelGenerationException {
 		def properties = validateProperties(definition, [name: String, type: String])
 		return argument(properties["name"], properties["type"])
 	}
@@ -76,7 +76,7 @@ class Procedure extends AbstractModifier implements Named {
 		return new Procedure(this.name, typeEnvironment, arguments.addElement(name), results, cm, abstractM, concM, eventM, precondition, postcondition)
 	}
 
-	def Procedure result(LinkedHashMap definition) throws ModelGenerationException {
+	def Procedure result(Map<String, ?> definition) throws ModelGenerationException {
 		def properties = validateProperties(definition, [name: String, type: String])
 		return result(properties["name"], properties["type"])
 	}
@@ -124,7 +124,7 @@ class Procedure extends AbstractModifier implements Named {
 		return new Procedure(this.name, typeEnvironment, arguments, results, contextM, absM, concreteM, em, precondition, post)
 	}
 
-	def Procedure implementation(Closure cls) throws ModelGenerationException {
+	def Procedure implementation(Closure<?> cls) throws ModelGenerationException {
 		implementation(concreteM.make(cls))
 	}
 
@@ -161,7 +161,7 @@ class Procedure extends AbstractModifier implements Named {
 		res
 	}
 
-	def Procedure make(Closure definition) throws ModelGenerationException {
+	def Procedure make(Closure<?> definition) throws ModelGenerationException {
 		Procedure proc = runClosure(definition)
 		if (proc.precondition == null || proc.postcondition == null || proc.getImplementation().getChildrenOfType(Block.class).isEmpty()) {
 			throw new IllegalArgumentException("procedure definition must define a precondition, postcondition, and algorithm for the implementation")

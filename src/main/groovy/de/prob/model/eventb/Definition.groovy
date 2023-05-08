@@ -19,7 +19,7 @@ class Definition {
 	 * @param map representing the pair label/formula.
 	 * @throws IllegalArgumentException
 	 */
-	def Definition(LinkedHashMap map) {
+	def Definition(Map<String, String> map) {
 		if (map.size() != 1) {
 			throw new IllegalArgumentException("Definitions must define only one property")
 		}

@@ -43,7 +43,7 @@ public class If extends Statement {
 		}, Else)
 	}
 
-	def If Then(Closure definition) {
+	def If Then(Closure<?> definition) {
 		if(Then != null) {
 			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
@@ -66,7 +66,7 @@ public class If extends Statement {
 		})
 	}
 
-	def If Else(Closure definition) {
+	def If Else(Closure<?> definition) {
 		if(Else != null) {
 			throw new IllegalStateException("The Then block of this If statement has already been defined. Cannot be redefined.")
 		}
@@ -85,7 +85,7 @@ public class If extends Statement {
 		newIf(Then ?: newBlock(), Else ?: newBlock())
 	}
 
-	def If make(Closure definition) {
+	def If make(Closure<?> definition) {
 		runClosure(definition).finish()
 	}
 
