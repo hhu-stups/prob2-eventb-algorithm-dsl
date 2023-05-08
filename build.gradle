@@ -39,7 +39,7 @@ sourceSets {
 
 dependencies {
 	implementation group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
-	implementation group: "com.google.code.gson", name: "gson", version: "2.9.0" // Apache License 2.0
+	implementation group: "com.google.code.gson", name: "gson", version: "2.10.1" // Apache License 2.0
 	api group: "de.hhu.stups", name: "de.prob2.kernel", version: "4.12.2-SNAPSHOT" // Eclipse Public License 2.0
 	implementation group: "de.hhu.stups", name: "eventbalg", version: "2.12.4" // Eclipse Public License 1.0
 
@@ -47,8 +47,8 @@ dependencies {
 	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-4.0" // Apache License 2.0
 	testRuntimeOnly group: "de.hhu.stups", name: "de.prob2.commandline", version: "4.12.2-SNAPSHOT"
 	// Byte Buddy and Objenesis are needed by Spock to mock classes
-	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.12.8" // Apache License 2.0
-	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.2" // Apache License 2.0
+	testRuntimeOnly group: "net.bytebuddy", name: "byte-buddy", version: "1.14.4" // Apache License 2.0
+	testRuntimeOnly group: "org.objenesis", name: "objenesis", version: "3.3" // Apache License 2.0
 }
 
 java {
