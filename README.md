@@ -16,3 +16,5 @@ More details can be found in this article:
 
 Full details are in the Master's thesis of Joy Clark from 2016 entitled "An Algorithm Description Language
 for Event-B".
+
+The original version of this code can be found at: https://github.com/joyheron/eventb_gen
