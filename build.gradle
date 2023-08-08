@@ -39,7 +39,7 @@ sourceSets {
 }
 
 dependencies {
-	final sableCCVersion = "3.5.0"
+	final sableCCVersion = "3.6.0"
 	sableCC(group: "de.hhu.stups", name: "sablecc", version: sableCCVersion)
 	api(group: "de.hhu.stups", name: "sablecc-runtime", version: sableCCVersion)
 	implementation group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
