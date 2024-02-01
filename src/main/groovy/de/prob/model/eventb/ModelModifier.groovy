@@ -84,7 +84,7 @@ public class ModelModifier extends AbstractModifier {
 		}
 
 		ModelElementList<Context> seenContexts = m.getSees()
-		def sees = props["sees"].findAll { !seenContexts.hasProperty(it) }
+		def sees = props["sees"].findAll { seenContexts.getElement(it) == null }
 		sees.each { c ->
 			Context context = model.getContexts().getElement(c)
 			if (context == null) {
