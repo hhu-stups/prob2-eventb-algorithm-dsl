@@ -3,10 +3,7 @@ package de.prob.model.eventb
 import de.prob.animator.domainobjects.EventB
 import de.prob.model.eventb.Event.EventType
 import de.prob.model.eventb.algorithm.ast.Block
-import de.prob.model.representation.ElementComment
 import de.prob.model.representation.ModelElementList
-
-import org.eventb.core.ast.extension.IFormulaExtension
 
 import spock.lang.Specification
 
@@ -32,7 +29,7 @@ class MachineModifierTest extends Specification {
 	def "constructor with machine & type env"() {
 		when:
 		def machine = new EventBMachine("m")
-		def typeEnv = [Mock(IFormulaExtension)] as Set
+		def typeEnv = [new TestFormulaExtension()] as Set
 		modifier = new MachineModifier(machine, typeEnv)
 
 		then:

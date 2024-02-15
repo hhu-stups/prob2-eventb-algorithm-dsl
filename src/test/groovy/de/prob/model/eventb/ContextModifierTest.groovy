@@ -1,7 +1,5 @@
 package de.prob.model.eventb
 
-import org.eventb.core.ast.extension.IFormulaExtension
-
 import spock.lang.Specification
 
 class ContextModifierTest extends Specification {
@@ -31,7 +29,7 @@ class ContextModifierTest extends Specification {
 	def "typeEnv can be set"() {
 		when:
 		def ctx = new Context("name")
-		def typeEnv = [Mock(IFormulaExtension)] as Set
+		def typeEnv = [new TestFormulaExtension()] as Set
 		def cm = new ContextModifier(ctx, typeEnv)
 
 		then:

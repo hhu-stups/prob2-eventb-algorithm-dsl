@@ -2,9 +2,6 @@ package de.prob.model.eventb
 
 import de.prob.animator.domainobjects.EventB
 import de.prob.model.eventb.Event.EventType
-import de.prob.model.representation.ElementComment
-
-import org.eventb.core.ast.extension.IFormulaExtension
 
 import spock.lang.Specification
 
@@ -39,7 +36,7 @@ class EventModifierTest extends Specification {
 
 	def "construction w/ init and typenv"() {
 		when:
-		def typeenv = [Mock(IFormulaExtension)] as Set
+		def typeenv = [new TestFormulaExtension()] as Set
 		modifier = new EventModifier(event, true,typeenv)
 
 		then:
