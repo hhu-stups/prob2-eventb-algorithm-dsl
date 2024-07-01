@@ -48,7 +48,9 @@ dependencies {
 	api(group: "de.hhu.stups", name: "de.prob2.kernel") // Eclipse Public License 2.0
 
 	// Test dependencies
-	testImplementation group: "org.junit.vintage", name: "junit-vintage-engine" // version is set by junit-bom pulled in by spock-core
+	// The JUnit version is set by junit-bom pulled in by spock-core.
+	testRuntimeOnly(group: "org.junit.platform", name: "junit-platform-launcher")
+	testImplementation(group: "org.junit.vintage", name: "junit-vintage-engine")
 	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-4.0" // Apache License 2.0
 	testRuntimeOnly(group: "de.hhu.stups", name: "de.prob2.commandline")
 }
