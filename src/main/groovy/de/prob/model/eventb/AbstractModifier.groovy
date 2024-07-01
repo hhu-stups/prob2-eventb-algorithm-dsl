@@ -127,15 +127,17 @@ class AbstractModifier extends AbstractElement {
 		if (formula == null) {
 			throw new IllegalArgumentException("${expected.name().toLowerCase()} must not be null");
 		}
-		EventB f = new EventB(formula, typeEnvironment)
-		ensureType(f, expected)
-		return f
+		try {
+			EventB f = new EventB(formula, typeEnvironment)
+			ensureType(f, expected)
+			return f
+		} catch (EvaluationException exc) {
+			throw new FormulaParseException(formula, exc)
+		}
 	}
 
 	def EventB ensureType(EventB formula, EvalElementType expected) {
-		if (formula.kind == EvalElementType.NONE) {
-			throw new FormulaParseException(formula.toString())
-		} else if (formula.kind != expected) {
+		if (formula.kind != expected) {
 			throw new FormulaTypeException(formula, expected.name())
 		}
 		return formula
