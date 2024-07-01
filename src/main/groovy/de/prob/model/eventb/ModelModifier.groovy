@@ -160,6 +160,9 @@ public class ModelModifier extends AbstractModifier {
 
 	def ModelModifier replaceContext(Context oldContext, Context newContext) {
 		EventBModel m = model
+		if (m.mainComponent == oldContext) {
+			m = m.withMainComponent(newContext)
+		}
 		m = m.withContexts(m.contexts.replaceElement(oldContext, newContext))
 		m.graph.getIncomingEdges(oldContext.getName()).each { Edge e ->
 			if (e.relationship == ERefType.EXTENDS) {
@@ -177,6 +180,9 @@ public class ModelModifier extends AbstractModifier {
 
 	def ModelModifier replaceMachine(EventBMachine oldMachine, EventBMachine newMachine) {
 		EventBModel m = model
+		if (m.mainComponent == oldMachine) {
+			m = m.withMainComponent(newMachine)
+		}
 		m = m.withMachines(m.machines.replaceElement(oldMachine, newMachine))
 		m.graph.getIncomingEdges(oldMachine.getName()).each { Edge e ->
 			if (e.relationship == ERefType.REFINES) {
