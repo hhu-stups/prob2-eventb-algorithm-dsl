@@ -44,7 +44,7 @@ dependencies {
 	api(group: "de.hhu.stups", name: "sablecc-runtime", version: sableCCVersion)
 	implementation group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
 	implementation group: "com.google.code.gson", name: "gson", version: "2.10.1" // Apache License 2.0
-	api(platform(group: "de.hhu.stups", name: "prob-java-bom", version: "4.13.2-SNAPSHOT"))
+	api(platform(group: "de.hhu.stups", name: "prob-java-bom", version: "4.15.0"))
 	api(group: "de.hhu.stups", name: "de.prob2.kernel") // Eclipse Public License 2.0
 
 	// Test dependencies
