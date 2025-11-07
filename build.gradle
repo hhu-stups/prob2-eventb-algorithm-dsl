@@ -41,19 +41,19 @@ sourceSets {
 
 dependencies {
 	final sableCCVersion = "3.9.0"
-	sableCC(group: "de.hhu.stups", name: "sablecc", version: sableCCVersion)
-	api(group: "de.hhu.stups", name: "sablecc-runtime", version: sableCCVersion)
-	implementation group: "com.github.krukow", name: "clj-ds", version: "0.0.4" // Eclipse Public License 1.0
-	implementation group: "com.google.code.gson", name: "gson", version: "2.10.1" // Apache License 2.0
-	api(platform(group: "de.hhu.stups", name: "prob-java-bom", version: "4.15.0"))
-	api(group: "de.hhu.stups", name: "de.prob2.kernel") // Eclipse Public License 2.0
+	sableCC("de.hhu.stups:sablecc:${sableCCVersion}")
+	api("de.hhu.stups:sablecc-runtime:${sableCCVersion}")
+	implementation("com.github.krukow:clj-ds:0.0.4") // Eclipse Public License 1.0
+	implementation("com.google.code.gson:gson:2.10.1") // Apache License 2.0
+	api(platform("de.hhu.stups:prob-java-bom:4.15.0"))
+	api("de.hhu.stups:de.prob2.kernel") // Eclipse Public License 2.0
 
 	// Test dependencies
 	// The JUnit version is set by junit-bom pulled in by spock-core.
-	testRuntimeOnly(group: "org.junit.platform", name: "junit-platform-launcher")
-	testImplementation(group: "org.junit.vintage", name: "junit-vintage-engine")
-	testImplementation group: "org.spockframework", name: "spock-core", version: "2.3-groovy-4.0" // Apache License 2.0
-	testRuntimeOnly(group: "de.hhu.stups", name: "de.prob2.commandline")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	testImplementation("org.junit.vintage:junit-vintage-engine")
+	testImplementation("org.spockframework:spock-core:2.3-groovy-4.0") // Apache License 2.0
+	testRuntimeOnly("de.hhu.stups:de.prob2.commandline")
 }
 
 java {
