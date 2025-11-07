@@ -44,7 +44,7 @@ dependencies {
 	sableCC("de.hhu.stups:sablecc:${sableCCVersion}")
 	api("de.hhu.stups:sablecc-runtime:${sableCCVersion}")
 	implementation("com.github.krukow:clj-ds:0.0.4") // Eclipse Public License 1.0
-	implementation("com.google.code.gson:gson:2.10.1") // Apache License 2.0
+	implementation("com.google.code.gson:gson:2.13.2") // Apache License 2.0
 	api(platform("de.hhu.stups:prob-java-bom:4.15.0"))
 	api("de.hhu.stups:de.prob2.kernel") // Eclipse Public License 2.0
 
