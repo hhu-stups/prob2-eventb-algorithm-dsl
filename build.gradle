@@ -58,7 +58,6 @@ dependencies {
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 final SOURCE_ENCODING = "UTF-8"
