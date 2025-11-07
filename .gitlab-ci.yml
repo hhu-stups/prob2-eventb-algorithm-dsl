@@ -1,5 +1,3 @@
-image: eclipse-temurin:8
-
 stages:
   - test
 
@@ -17,13 +15,6 @@ before_script:
 .tests:
   stage: test
   script: ./gradlew ${GRADLE_OPTIONS} check
-
-tests:jdk-8:
-  extends: .tests
-
-tests:jdk-11:
-  extends: .tests
-  image: eclipse-temurin:11
 
 tests:jdk-17:
   extends: .tests
